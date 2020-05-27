@@ -68,7 +68,7 @@ async function buildInitialDb() {
     }
 }
    
-async function initializeusers() {
+async function initializeUsers() {
     try {
         console.log('starting to create users...');
 
@@ -86,7 +86,7 @@ try {
 
     await dropTables();
     await buildInitialDb();
-    await initializeusers();
+    await initializeUsers();
 
 } catch (error) {
 
