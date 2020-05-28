@@ -17,13 +17,19 @@ usersRouter.get('/', async(req, res, next)=>{
 
 usersRouter.post('/register', async (req, resp, next)=>{
 
-    const { username, password } = req.body;
+    try {
+        const { username, password } = req.body;
     console.log('reached /users/register with username: ', username);
 
     bcrypt.hash(password, SALT_COUNT, (error, hashedPassword)=>{
     
     return createUser({username, password: hashedPassword});
 } );
+    } catch (error) {
+        
+        throw error;
+    }
+    
 
 
 })
