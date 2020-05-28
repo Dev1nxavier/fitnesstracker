@@ -12,7 +12,6 @@ apiRouter.use('/users', usersRouter);
 const activitiesRouter = require('./activities');
 apiRouter.use('/activities', activitiesRouter);
 
-
 apiRouter.use((error, req, res, next)=>{
     res.send(error);
 });
