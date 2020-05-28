@@ -74,6 +74,14 @@ async function initializeusers() {
 
         const fakeOne = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
 
+        const faketwo = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+
+        const fakethree = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+
+        const fakefour = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+
+        const fakefive = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+        
     } catch (error) {
         throw error; 
     }
