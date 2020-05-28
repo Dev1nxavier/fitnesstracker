@@ -19,7 +19,23 @@ async function createUser({username, password}){
         throw error; 
         
     }
-   
 }
 
-module.exports={createUser, db};
+async function getAllActivities() {
+    try {
+        const {rows} = await db.query(`
+            SELECT *
+            FROM activities;
+        `);
+
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports={
+    db,
+    createUser,
+    getAllActivities,
+};
