@@ -52,7 +52,7 @@ async function buildInitialDb() {
             goal TEXT NOT NULL
         );
         `)
-            //NOTE: WILL WE GET AN ERROR BY HAVING FOREIGN KEY WITHOUT REFERENCES??
+            //NOTE: WILL WE GET AN ERROR BY HAVING FOREIGN KEY WITHOUT REFERENCES?? A: YES!
         const { rows } = await db.query(`
         CREATE TABLE routine_activities(
             id SERIAL PRIMARY KEY, 
@@ -74,13 +74,14 @@ async function initializeUsers() {
 
         const fakeOne = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
 
-        const faketwo = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+        //Sorry, the OCD...
+        const fakeTwo = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
 
-        const fakethree = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+        const fakeThree = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
 
-        const fakefour = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+        const fakeFour = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
 
-        const fakefive = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+        const fakeFive = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
         
     } catch (error) {
         throw error; 
