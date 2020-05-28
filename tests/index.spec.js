@@ -5,11 +5,16 @@
 
 const axios = require('axios');
 
-describe('user_route', ()=>{
-    it('responds to get request at /user with message "OK"', async ()=>{
-       const resp = await axios.get('http://localhost:3000/api/users');
+describe('Booleans', ()=>{
+    it('is a test of the tests', async ()=>{
+        expect(true === true).toEqual(true);
+    });
+})
 
-       expect(resp.data.message).toBeTruthy();
+describe('UserRouter', ()=>{
+    it('sends a get request to /api/users', async()=>{
+        const res = await axios.get('http://localhost:3000/api');
 
+        expect(typeof res.data.message).toEqual('string');
     })
 })
