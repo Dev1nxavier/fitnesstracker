@@ -72,8 +72,6 @@ async function initializeUsers() {
     try {
         console.log('starting to create users...');
 
-        const fakeOne = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
-
         //Sorry, the OCD...
         const fakeTwo = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
 
@@ -82,6 +80,7 @@ async function initializeUsers() {
         const fakeFour = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
 
         const fakeFive = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+
         
     } catch (error) {
         throw error; 

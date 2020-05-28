@@ -12,7 +12,9 @@ async function createUser({username, password}){
         VALUES($1, $2)
         RETURNING *;
         `, [username, password]);
-    
+        
+        console.log('user: ', username, 'password: ', password);
+
         return user; 
     } catch (error) {
 
@@ -48,9 +50,31 @@ async function getAllActivities() {
     }
 }
 
+async function getUserByUsername(username) {
+
+    console.log('retrieving user info by username: ', username);
+
+    try {
+
+        const { row:user } = await db.query(`
+        SELECT * FROM users
+        WHERE user = $1;
+    `, username)
+
+    console.log('username: ', user.username, 'password: ', user.password);
+
+    return user;
+
+    } catch (error) {
+        throw error;
+    }
+    
+}
+
 module.exports={
     db,
     createUser,
     getAllActivities,
     createActivity,
+    getUserByUsername
 };
