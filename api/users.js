@@ -11,6 +11,12 @@ const bcrypt = require('bcrypt');
 
 const SALT_COUNT = 10;
 
+usersRouter.get('/', async (req, resp, next)=>{
+    resp.send({message: "You have successfully entered users"});
+
+    resp.end();
+})
+
 usersRouter.post('/register', async (req, resp, next)=>{
 
     const { username, password } = req.body;
