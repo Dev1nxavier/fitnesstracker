@@ -1,4 +1,4 @@
-const { db, createUser } = require('./index');
+const { db, createUser, createActivity } = require('./index');
 
 const faker = require('faker');
 
@@ -85,27 +85,40 @@ async function initializeUsers() {
         
     } catch (error) {
         throw error; 
+    } 
+}
+
+async function initializeActivities() {
+    try {
+        console.log('starting to create activities...');
+
+        const fakeOne = await createActivity({name: faker.company.bsBuzz, description: faker.company.bs});
+        const fakeTwo = await createActivity({name: faker.company.bsBuzz, description: faker.company.bs});
+        const fakeThree = await createActivity({name: faker.company.bsBuzz, description: faker.company.bs});
+        const fakeFour = await createActivity({name: faker.company.bsBuzz, description: faker.company.bs});
+        
+    } catch(error) {
+        throw error; 
     }
-    
 }
 
 async function startDB() {
-try {
+  try {
     db.connect();
 
     await dropTables();
     await buildInitialDb();
     await initializeUsers();
-
-} catch (error) {
-
+  } catch (error) {  
+    console.log("Error during startDB")
     throw error;
-
-}finally{
- console.log('closing db connection.');
-    db.end();
-    }
+  }
 }
 
-startDB();
+startDB()
+  .catch(console.error)
+  .finally(() => {
+    console.log("closing db connection.");
+    db.end();
+  });
     
