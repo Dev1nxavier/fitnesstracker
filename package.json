@@ -8,7 +8,8 @@
   },
   "scripts": {
     "seed:dev": "node-dev --respawn ./db/seed.js",
-    "start:dev": "node-dev --respawn ./index.js"
+    "start:dev": "node-dev --respawn ./index.js",
+    "test:watch": "jest --watchAll --maxWorkers=1"
   },
   "repository": {
     "type": "git",
@@ -22,8 +23,10 @@
   },
   "homepage": "https://github.com/Dev1nxavier/fitnesstracker#readme",
   "dependencies": {
+    "axios": "^0.19.2",
     "bcrypt": "^4.0.1",
     "chalk": "^4.0.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "faker": "^4.1.0",

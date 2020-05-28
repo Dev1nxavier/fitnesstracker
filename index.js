@@ -7,14 +7,16 @@ const { db } = require('./db');
 
 db.connect();
 
+const cors = require('cors');
+
 const express = require('express');
 
 const server = express();
 
 const morgan = require('morgan');
 
-const bodyParser = require('body-parser');
 server.use(morgan('dev')); //use morgan in development environment only
+server.use(cors());
 
 const apiRouter = require ('./api');
 server.use('/api', apiRouter);
