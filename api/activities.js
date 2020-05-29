@@ -25,10 +25,10 @@ activitiesRouter.post('/',requireUser, async(req, res, next) => {
     const body = req.body;
 
     try {
-        const post = await createActivity(body);
-        if (post) {
+        const activity = await createActivity(body);
+        if (activity) {
             res.send({
-                post,
+                activity,
             });
         } else {
             next({
