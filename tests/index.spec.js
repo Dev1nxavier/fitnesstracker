@@ -5,7 +5,7 @@
 
 const axios = require('axios');
 const faker = require('faker');
-const { getUserByUsername } = require('../db'); 
+const { getUserByUsername, createActivity } = require('../db'); 
 // const { startDB } = require('../db/seed'); 
 
 let user;
@@ -71,6 +71,15 @@ describe('UserRouter', ()=>{
 
         expect(typeof res.data.message).toEqual('string');
 
+    })
+
+    it('creates a new activity', async()=>{
+        const res = await axios.post('http://localhost:3000/api/activities/', {
+            name: 'Deadlifts',
+            description: 'Gets you jacked!'
+        })
+
+        expect(typeof res).toEqual('string');
     })
 
 })

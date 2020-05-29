@@ -2,7 +2,7 @@ const express = require('express');
 
 const jwt = require('jsonwebtoken');
 
-const { JWT_SECRET } = process.env || 'POST_SECRET';
+const { JWT_SECRET } = process.env.JWT_SECRET || 'POST_SECRET';
 
 const prefix = 'Bearer';
 

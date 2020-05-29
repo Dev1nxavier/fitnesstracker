@@ -91,10 +91,10 @@ async function initializeActivities() {
     try {
         console.log('starting to create activities...');
 
-        const fakeOne = await createActivity({name: faker.company.bsBuzz, description: faker.company.bs});
-        const fakeTwo = await createActivity({name: faker.company.bsBuzz, description: faker.company.bs});
-        const fakeThree = await createActivity({name: faker.company.bsBuzz, description: faker.company.bs});
-        const fakeFour = await createActivity({name: faker.company.bsBuzz, description: faker.company.bs});
+        const fakeOne = await createActivity({name: faker.company.bsBuzz(), description: faker.company.bs()});
+        const fakeTwo = await createActivity({name: faker.company.bsBuzz(), description: faker.company.bs()});
+        const fakeThree = await createActivity({name: faker.company.bsBuzz(), description: faker.company.bs()});
+        const fakeFour = await createActivity({name: faker.company.bsBuzz(), description: faker.company.bs()});
         
     } catch(error) {
         throw error; 
@@ -108,7 +108,7 @@ async function startDB() {
     await dropTables();
     await buildInitialDb();
     await initializeUsers();
-    // await initializeActivities();
+    await initializeActivities();
   } catch (error) {  
     console.log("Error during startDB")
     throw error;

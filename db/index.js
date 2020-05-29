@@ -25,13 +25,16 @@ async function createUser({username, password}){
 
 async function createActivity({name, description}) {
     try {
-        const {rows: [activity]} = await db.query(`
-            INSERT INTO activities(name, description)
+        const {rows} = await db.query(`
+            INSERT INTO activities("name", "description")
             VALUES($1, $2)
             RETURNING *;
         `, [name, description]);
 
-        return activity;
+        console.log('name: ', name, 'description: ', description);
+        console.log(rows);
+
+        return rows;
     } catch (error) {
         throw error;
     }
@@ -71,10 +74,26 @@ async function getUserByUsername(username) {
     
 }
 
+async function getUserById(Id) {
+    console.log('retrieving user by ID', Id);
+
+    try {
+        const {row} = await db.query(`
+            SELECT * FROM users
+            WHERE id = $1;
+        `, Id);
+
+        return row;
+    } catch (error) {
+        throw error
+    }
+}
+
 module.exports={
     db,
     createUser,
     getAllActivities,
     createActivity,
-    getUserByUsername
+    getUserByUsername,
+    getUserById
 };
