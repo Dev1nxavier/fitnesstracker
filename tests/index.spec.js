@@ -6,6 +6,9 @@
 const axios = require('axios');
 const faker = require('faker');
 const { getUserByUsername } = require('../db'); 
+// const { startDB } = require('../db/seed'); 
+
+let user;
 
 describe('Booleans', ()=>{
     it('is a test of the tests', async ()=>{
@@ -13,13 +16,6 @@ describe('Booleans', ()=>{
     });
 })
 
-describe('UserRouter', ()=>{
-    it('sends a get request to /api/users', async()=>{
-        const res = await axios.get('http://localhost:3000/api/users');
-
-        expect(typeof res.data.message).toEqual('string');
-    })
-})
 
 describe('ActivitiesRouter', ()=>{
     it('sends a get request to /api/activities', async()=>{
@@ -29,40 +25,55 @@ describe('ActivitiesRouter', ()=>{
     })
 })
 
-//get users from users table
-describe('getAllUsers', ()=>{
+describe('UserRouter', ()=>{
+
+    // beforeAll(async()=>{
+    //     //initialize db
+    //     await startDB();
+    // })
+
+    it('sends a get request to /api/users', async()=>{
+
+        const res = await axios.get('http://localhost:3000/api/users');
+
+        expect(typeof res.data.message).toEqual('string');
+    })
+
     it('retrieves all users from user table', async()=>{
         const users = await axios.get('http://localhost:3000/api/activities');
 
         expect(users.length!==0).toEqual(true);
     })
-})
 
-describe('registerUserRoute', ()=>{
-    it('register new user via post/users/register', async ()=>{
-        jest.setTimeout(10000);
+    it('registers new user via post/users/register', async ()=>{
 
-        const resp = await axios.post('http://localhost:3000/api/users/register', {
-            username: 'MRT',
-            password: 'pittydafool!'
+        const username = faker.internet.userName();
+        const password = 'password';
+
+        const  res = await axios.post('http://localhost:3000/api/users/register', {
+            username: username,
+            password: password
         });
 
-        expect(typeof resp.data.message).toEqual('string');
+        user = { username, password };
+
+        expect(typeof res.data.message).toEqual('string');
 
     });
-})
 
-describe('login', ()=>{
     it('check for matching username/ password match', async()=>{
 
 
         const res = await axios.post('http://localhost:3000/api/users/login', {
-            username: 'MRT' ,
-            password: 'pittydafool!'
+            username: user.username ,
+            password: user.password
         })
 
         expect(typeof res.data.message).toEqual('string');
 
     })
+
 })
+
+
 

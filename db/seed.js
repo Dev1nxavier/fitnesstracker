@@ -108,6 +108,7 @@ async function startDB() {
     await dropTables();
     await buildInitialDb();
     await initializeUsers();
+    // await initializeActivities();
   } catch (error) {  
     console.log("Error during startDB")
     throw error;

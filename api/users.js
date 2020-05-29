@@ -33,7 +33,7 @@ usersRouter.post('/register', async (req, resp, next)=>{
     
     return createUser({username, password: hashedPassword});
     } );
-
+    console.log('From register, user is now: ', user)
     resp.send({message: 'new user created', user:user })
 
     } catch (error) {
@@ -64,7 +64,8 @@ usersRouter.post('/login', async (req, res, next)=>{
 
     const login = bcrypt.compare(password, hashedPassword, (error, passwordMatch)=>{
           if (passwordMatch) {
-
+            const id = user.id;
+            
             console.log('successfully matched password!');
             const token = jwt.sign({id, username}, JWT_SECRET);  
             res.send({message: 'Token: ', token});
