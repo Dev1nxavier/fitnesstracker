@@ -40,7 +40,7 @@ describe('UserRouter', ()=>{
     })
 
     it('retrieves all users from user table', async()=>{
-        const users = await axios.get('http://localhost:3000/api/activities');
+        const users = await axios.get('http://localhost:3000/api/activities');//activities?
 
         expect(users.length!==0).toEqual(true);
     })
@@ -74,12 +74,12 @@ describe('UserRouter', ()=>{
     })
 
     it('creates a new activity', async()=>{
-        const res = await axios.post('http://localhost:3000/api/activities/', {
+        const res = await axios.post('http://localhost:3000/api/activities', {
             name: 'Deadlifts',
             description: 'Gets you jacked!'
         })
 
-        expect(typeof res).toEqual('string');
+        expect(Object.length !== 0);
     })
 
 })
