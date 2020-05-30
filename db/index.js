@@ -25,36 +25,6 @@ async function createUser({username, password}){
     }
 }
 
-async function createActivity({name, description}) {
-    try {
-        const {rows} = await db.query(`
-            INSERT INTO activities("name", "description")
-            VALUES($1, $2)
-            RETURNING *;
-        `, [name, description]);
-
-        console.log('name: ', name, 'description: ', description);
-        console.log(rows);
-
-        return rows;
-    } catch (error) {
-        throw error;
-    }
-}
-
-async function getAllActivities() {
-    try {
-        const {rows} = await db.query(`
-            SELECT *
-            FROM activities;
-        `);
-
-        return rows;
-    } catch (error) {
-        throw error;
-    }
-}
-
 async function getUserByUsername(username) {
 
     console.log('retrieving user info by username: ', username);
@@ -95,11 +65,69 @@ async function getUserById(Id) {
     }
 }
 
+async function createActivity({name, description}) {
+    try {
+        const {rows} = await db.query(`
+            INSERT INTO activities("name", "description")
+            VALUES($1, $2)
+            RETURNING *;
+        `, [name.toLowerCase(), description]); //laziest way to do this. Best way?
+
+        console.log('name: ', name, 'description: ', description);
+        console.log(rows);
+
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function getAllActivities() {
+    try {
+        const {rows} = await db.query(`
+            SELECT *
+            FROM activities;
+        `);
+
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
+//Will this work? I think so... if not destructure and do it the easy way
+async function updateActivity(fields = {}) {    
+    const {id} = fields;
+    delete fields.id;
+
+    const setString = Object.keys(fields)
+    .map((key, index) => `"${key}"=$${index + 1}`)
+    .join(", ");
+
+    if (setString.length === 0) {
+        return;
+    }
+
+    try {
+        const {rows} = await db.query(`
+            UPDATE activities
+            SET ${setString}
+            WHERE id=${id}
+            RETURNING *;
+        `);
+
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports={
     db,
     createUser,
-    getAllActivities,
-    createActivity,
     getUserByUsername,
-    getUserById
+    getUserById,
+    createActivity,
+    getAllActivities,
+    updateActivity,
 };

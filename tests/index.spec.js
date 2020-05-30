@@ -74,8 +74,8 @@ describe('UserRouter', ()=>{
     it('creates a new activity', async()=>{
 
         const data = {
-            name: 'pushups',
-            description: 'go big or go home!'
+            name: 'SQUATS',
+            description: "Don't skip leg day!"
         };
 
         const res = await axios.post('http://localhost:3000/api/activities',data,

@@ -27,7 +27,7 @@ usersRouter.post('/register', async (req, resp, next)=>{
         const { username, password } = req.body;
     console.log('reached /users/register with username: ', username);
 
-    const user = bcrypt.hash(password, SALT_COUNT, async(error, hashedPassword)=>{
+    const user = bcrypt.hash(password, SALT_COUNT, async(error, hashedPassword)=>{//'const user =' not being used? can't this be removed? test still works
 
     console.log('username: ', username, 'hashedpassword: ', hashedPassword);
     

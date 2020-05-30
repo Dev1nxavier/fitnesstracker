@@ -1,5 +1,5 @@
 const express = require('express');
-const {getAllActivities, createActivity} = require('../db');
+const {getAllActivities, createActivity, updateActivity} = require('../db');
 const {requireUser} = require('./utils');
 const activitiesRouter = express.Router();
 
@@ -42,6 +42,38 @@ activitiesRouter.post('/', requireUser, async(req, res, next) => {
 })
 
 // PATCH /activities/:activityId (*)
+activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
+    const {activityId} = req.params;
+    const body = {name, description} = req.body;
+    const updateFields = {};
+
+    console.log("Update to be applied to Activity: ", body);
+
+    if (name) {
+        updateFields.name = name;
+    }
+
+    if (description) {
+        updateFields.description = description;
+    }
+
+    try {
+        const newActivity = await updateActivity({id: activityId, name, description});
+
+        if (newActivity) {
+            res.send({
+                newActivity,
+            })
+        } else {
+            next({
+                name: "noNewActivityError",
+                message: "Activity Not Updated!"
+            })
+        }
+    } catch ({name, message}) {
+        next({name, message});
+    }
+});
 
 // GET /activities/:activityId/routines
 
