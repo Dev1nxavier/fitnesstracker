@@ -176,6 +176,41 @@ async function createRoutine({creatorId, publica, name, goal}) {
     }
 }
 
+//helper stringify function 
+function setStringFunction(fields) {
+    const stringFields = Object.keys(fields).map((key, index)=>{
+         `"${key}" = $${index+1}`
+    }).join(', ');
+
+    if (stringFields.length === 0) {
+        return; 
+    }
+
+    const queryString = Object.values(fields);
+
+    const newFields = {stringFields, queryString};
+    return newFields;
+}
+
+async function updateRoutine(routineId, fields ={}) {
+
+    console.log('Entered updateRoutine in db');
+
+    const { setString, queryString } = setStringFunction(fields);
+
+
+    const {rows} = await db.query(`
+        UPDATE routines
+        SET (${setString})
+        WHERE id = ${routineId};
+    `, [queryString]);
+
+    console.log('Exiting UpdateRoutine in db');
+
+    return rows;
+}
+
+
 module.exports={
     db,
     createUser,
@@ -187,4 +222,5 @@ module.exports={
     createRoutine,
     getAllRoutines,
     getPublicRoutines,
+    updateRoutine,
 };

@@ -4,8 +4,16 @@ SEAN: Users
     -functionality
     -routes
     -password & hashing
+    SATURDAY:
+    -routine_activities routes & functions
 
 BRIAN: Activities/ Routines
     - functionality
     -routes
     -methods 
+    SATURDAY:
+    -Finish routines routes & functions
+
+SLACK if stuck if needed!
+
+Small change here. 

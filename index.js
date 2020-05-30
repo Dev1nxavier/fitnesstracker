@@ -13,6 +13,8 @@ const express = require('express');
 
 const server = express();
 
+server.use(express.json());
+
 const morgan = require('morgan');
 
 server.use(morgan('dev')); //use morgan in development environment only
