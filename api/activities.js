@@ -21,11 +21,11 @@ activitiesRouter.get('/', async(req, res) => {
 });
 
 // POST /activities (*)
-activitiesRouter.post('/',requireUser, async(req, res, next) => {
+activitiesRouter.post('/', async(req, res, next) => {
     const body = req.body;
     console.log('Activity to be created: ',body);
     try {
-        const activity = await createActivity(body);
+        const activity = await createActivity({name: body.name, description: body.description});
         if (activity) {
             res.send({
                 activity,

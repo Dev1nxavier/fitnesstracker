@@ -72,16 +72,18 @@ describe('UserRouter', ()=>{
 
 
     it('creates a new activity', async()=>{
-        const res = await axios.post('http://localhost:3000/api/activities', 
-            {
-                name: 'curls',
-                description: 'go heavy bro!'
-            },
-            {
-                headers: {'Authorization': `Bearer ${token}`}
+        // const res = await axios.post('http://localhost:3000/api/activities', 
+        //     {
+        //         name: 'curls',
+        //         description: 'go heavy bro!'
+        //     },
+        //     {
+        //         headers: {'Authorization': `Bearer ${token}`}
             
-            }
-        )
+        //     }
+        // )
+
+        const res = await axios.post('http://localhost:3000/api/activities', {name: 'curls', description: 'go heavy bro!'});
 
         expect(true);
     })
