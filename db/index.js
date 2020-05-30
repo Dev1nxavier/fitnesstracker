@@ -95,10 +95,11 @@ async function getAllActivities() {
     }
 }
 
-//Will this work? I think so... if not destructure and do it the easy way
+//works but can't figure out how to get name toLowerCase
 async function updateActivity(fields = {}) {    
     const {id} = fields;
     delete fields.id;
+    // fields.name.toLowerCase();
 
     const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
@@ -108,13 +109,16 @@ async function updateActivity(fields = {}) {
         return;
     }
 
+    console.log('Entered updateActivity')
+    console.log('params: ', id, Object.values(fields));
+
     try {
         const {rows} = await db.query(`
             UPDATE activities
             SET ${setString}
             WHERE id=${id}
             RETURNING *;
-        `);
+        `, Object.values(fields));
 
         return rows;
     } catch (error) {

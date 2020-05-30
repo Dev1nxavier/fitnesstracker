@@ -47,6 +47,7 @@ activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
     const body = {name, description} = req.body;
     const updateFields = {};
 
+    console.log("Activity ID: ", activityId);
     console.log("Update to be applied to Activity: ", body);
 
     if (name) {
@@ -58,7 +59,7 @@ activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
     }
 
     try {
-        const newActivity = await updateActivity({id: activityId, name, description});
+        const newActivity = await updateActivity({id: activityId, name: name, description: description});
 
         if (newActivity) {
             res.send({

@@ -71,11 +71,10 @@ describe('UserRouter', ()=>{
     })
 
 
-    it('creates a new activity', async()=>{
-
+    it('creates a new activity', async () => {
         const data = {
-            name: 'SQUATS',
-            description: "Don't skip leg day!"
+            name: 'Curls',
+            description: "go heavy bro!"
         };
 
         const res = await axios.post('http://localhost:3000/api/activities',data,
@@ -88,8 +87,24 @@ describe('UserRouter', ()=>{
         // const res = await axios.post('http://localhost:3000/api/activities', {name: 'curls', description: 'go heavy bro!'});
 
         expect(true);
-    })
+    });
 
+    it('updates an activity', async () => {
+        const data = {
+            name: 'SQUATS',
+            description: "Don't skip leg day!"
+        }
+
+        const res = await axios.patch('http://localhost:3000/api/activities/1',data,
+            {
+                headers: {'Authorization': `Bearer ${token}`}
+            
+            }
+        )
+
+        expect(true);
+    });
+    
 })
 
 
