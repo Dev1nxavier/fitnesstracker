@@ -14,6 +14,8 @@ apiRouter.use(async (req, res, next) => {
     const auth = req.header("Authorization");
     console.log('headers: ', req.headers);
     if(!auth) {
+
+        console.log('no authorization?');
         next();
     } else if (auth.startsWith(prefix)) {
         const token = auth.slice(prefix.length);
