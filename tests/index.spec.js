@@ -91,11 +91,11 @@ describe('UserRouter', ()=>{
 
     it('updates an activity', async () => {
         const data = {
-            name: 'SQUATS',
-            description: "Don't skip leg day!"
+            name: 'boop',
+            description: "They're horrible but great!"
         }
 
-        const res = await axios.patch('http://localhost:3000/api/activities/1',data,
+        const res = await axios.patch(`http://localhost:3000/api/activities/${2}`,data,
             {
                 headers: {'Authorization': `Bearer ${token}`}
             
