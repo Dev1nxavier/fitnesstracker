@@ -126,6 +126,56 @@ async function updateActivity(fields = {}) {
     }
 }
 
+async function getAllRoutines() {
+    console.log("Entering get all routines");
+
+    try {
+        const {rows} = await db.query(`
+            SELECT *
+            FROM routines
+        `);
+
+        console.log('Your routines: ', rows);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function getPublicRoutines() {
+    console.log("Entering get public routines");
+
+    try {
+        const {rows: [routines]} = await db.query(`
+            SELECT *
+            FROM routines
+            WHERE public =true;
+        `);
+
+        console.log('Your public routines: ', routines);
+        return routines;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function createRoutine({creatorId, publica, name, goal}) {
+    console.log("Entering createRoutine");
+
+    try {
+        const {rows} = await db.query(`
+            INSERT INTO routines ("creatorId", "public", "name", "goal")
+            VALUES($1, $2, $3, $4)
+            RETURNING *;
+        `, [creatorId, publica, name, goal]);
+
+        console.log("Your new routine: ", rows);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
 module.exports={
     db,
     createUser,
@@ -134,4 +184,7 @@ module.exports={
     createActivity,
     getAllActivities,
     updateActivity,
+    createRoutine,
+    getAllRoutines,
+    getPublicRoutines,
 };
