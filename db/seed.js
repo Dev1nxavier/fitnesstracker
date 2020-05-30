@@ -1,4 +1,4 @@
-const { db, createUser, createActivity } = require('./index');
+const { db, createUser, createActivity, createRoutine } = require('./index');
 
 const faker = require('faker');
 
@@ -46,7 +46,7 @@ async function buildInitialDb() {
         await db.query(`
         CREATE TABLE routines(
             id SERIAL PRIMARY KEY, 
-            "creatorId" INTEGER REFERENCES activities(id),
+            "creatorId" INTEGER REFERENCES users(id),
             public BOOLEAN DEFAULT false,
             name VARCHAR(255) UNIQUE NOT NULL,
             goal TEXT NOT NULL
@@ -101,6 +101,18 @@ async function initializeActivities() {
     }
 }
 
+async function initializeRoutines() {
+    try {
+        console.log('starting to create routines...');
+
+        const fakeOne = await createRoutine({creatorId: 1, publica: true, name: faker.hacker.noun(), goal: faker.hacker.phrase()});        const fakeTwo = await createRoutine({creatorId: 2, publica: false, name: faker.hacker.noun(), goal: faker.hacker.phrase()});
+
+
+    } catch (error) {
+        throw error;
+    }
+}
+
 async function startDB() {
   try {
     db.connect();
@@ -109,6 +121,7 @@ async function startDB() {
     await buildInitialDb();
     await initializeUsers();
     await initializeActivities();
+    await initializeRoutines();
   } catch (error) {  
     console.log("Error during startDB")
     throw error;

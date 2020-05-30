@@ -104,6 +104,30 @@ describe('UserRouter', ()=>{
 
         expect(true);
     });
+
+    it('grabs all routines', async () => {
+        const res = await axios.get('http://localhost:3000/api/routines');
+
+        expect(res.data.length).toEqual(true);
+    })
+
+    it('creates a routine', async () => {
+        const data = {
+            creatorId: 1,
+            publica: false,
+            name: "The Backes Pump Method",
+            goal: "To get soooo jacked with minimal exogenous hormones needed"
+        };
+
+        const res = await axios.post(`http://localhost:3000/api/routines`, data,
+            {
+                headers: {'Authorization': `Bearer ${token}`}
+
+            }
+        );
+
+        expect(res.data.length).toEqual(true);//res.length or res.data.length?
+    });
     
 })
 
