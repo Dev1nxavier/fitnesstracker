@@ -9,14 +9,15 @@ const morgan = require('morgan');
 const {getUserById} = require('../db');
 
 apiRouter.use(async (req, res, next) => {
-    const prefix = "Bearer ";
+    console.log('Running authorization middleware...');
+    const prefix = "Bearer";
     const auth = req.header("Authorization");
-
+    console.log('headers: ', req.headers);
     if(!auth) {
         next();
     } else if (auth.startsWith(prefix)) {
         const token = auth.slice(prefix.length);
-
+        console.log('Token: ', token);
         try {
             const {id} = jwt.verify(token, JWT_SECRET);
 

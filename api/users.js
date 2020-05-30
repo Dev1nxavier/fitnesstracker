@@ -2,7 +2,7 @@ const express = require('express');
 
 const jwt = require('jsonwebtoken');
 
-const { JWT_SECRET } = process.env.JWT_SECRET || 'POST_SECRET';
+const { JWT_SECRET } = 'POST_SECRET';
 
 const prefix = 'Bearer';
 
@@ -27,14 +27,16 @@ usersRouter.post('/register', async (req, resp, next)=>{
         const { username, password } = req.body;
     console.log('reached /users/register with username: ', username);
 
-    const user = bcrypt.hash(password, SALT_COUNT, (error, hashedPassword)=>{
+    const user = bcrypt.hash(password, SALT_COUNT, async(error, hashedPassword)=>{
 
     console.log('username: ', username, 'hashedpassword: ', hashedPassword);
     
-    return createUser({username, password: hashedPassword});
-    } );
+    const user = await createUser({username, password: hashedPassword});
+
     console.log('From register, user is now: ', user)
     resp.send({message: 'new user created', user:user })
+    } );
+    
 
     } catch (error) {
         
@@ -67,8 +69,10 @@ usersRouter.post('/login', async (req, res, next)=>{
             const id = user.id;
             
             console.log('successfully matched password!');
-            const token = jwt.sign({id, username}, JWT_SECRET);  
-            res.send({message: 'Token: ', token});
+            const token = jwt.sign({id, username}, `${JWT_SECRET}`);  
+
+            console.log('Token: ', token);
+            res.send({message: 'SUCCESS', token});
 
         }else{
             next({name: "IncorrectLoginCredentialsError",

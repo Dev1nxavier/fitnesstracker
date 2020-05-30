@@ -7,6 +7,8 @@ const faker = require('faker');
 async function createUser({username, password}){
 
     try {
+
+
         const {rows: [user]} =  await db.query(`
         INSERT INTO users("username", "password") 
         VALUES($1, $2)
@@ -58,11 +60,15 @@ async function getUserByUsername(username) {
     console.log('retrieving user info by username: ', username);
 
     try {
+        console.log('querying users db for user...');
 
-        const { row:user } = await db.query(`
-        SELECT * FROM users
-        WHERE user = $1;
-    `, username)
+    const { rows: [user] } = await db.query(`
+      SELECT *
+      FROM users
+      WHERE username=$1
+    `, [username]);
+    
+    console.log('users db queried!');
 
     console.log('username: ', user.username, 'password: ', user.password);
 

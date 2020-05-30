@@ -9,6 +9,7 @@ const { getUserByUsername, createActivity } = require('../db');
 // const { startDB } = require('../db/seed'); 
 
 let user;
+let token;
 
 describe('Booleans', ()=>{
     it('is a test of the tests', async ()=>{
@@ -26,11 +27,6 @@ describe('ActivitiesRouter', ()=>{
 })
 
 describe('UserRouter', ()=>{
-
-    // beforeAll(async()=>{
-    //     //initialize db
-    //     await startDB();
-    // })
 
     it('sends a get request to /api/users', async()=>{
 
@@ -69,17 +65,25 @@ describe('UserRouter', ()=>{
             password: user.password
         })
 
-        expect(typeof res.data.message).toEqual('string');
+        token = res.data.token;
+        expect(res.data.message).toEqual('SUCCESS');
 
     })
 
-    it('creates a new activity', async()=>{
-        const res = await axios.post('http://localhost:3000/api/activities', {
-            name: 'Deadlifts',
-            description: 'Gets you jacked!'
-        })
 
-        expect(Object.length !== 0);
+    it('creates a new activity', async()=>{
+        const res = await axios.post('http://localhost:3000/api/activities', 
+            {
+                name: 'curls',
+                description: 'go heavy bro!'
+            },
+            {
+                headers: {'Authorization': `Bearer ${token}`}
+            
+            }
+        )
+
+        expect(true);
     })
 
 })
