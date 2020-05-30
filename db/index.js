@@ -81,15 +81,15 @@ async function getUserByUsername(username) {
 }
 
 async function getUserById(Id) {
-    console.log('retrieving user by ID', Id);
+    console.log('entered getUserById');
 
     try {
-        const {row} = await db.query(`
+        const {rows: [user]} = await db.query(`
             SELECT * FROM users
             WHERE id = $1;
-        `, Id);
-
-        return row;
+        `, [Id]);
+        console.log('retrieved user: ', user);
+        return user;
     } catch (error) {
         throw error
     }

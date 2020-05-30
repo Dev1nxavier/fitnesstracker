@@ -1,4 +1,7 @@
 require('dotenv').config();
+const { JWT_SECRET } = 'POST_SECRET';
+
+const jwt = require('jsonwebtoken');
 
 const express = require('express');
 
@@ -10,9 +13,9 @@ const {getUserById} = require('../db');
 
 apiRouter.use(async (req, res, next) => {
     console.log('Running authorization middleware...');
-    const prefix = "Bearer";
+    const prefix = "Bearer ";
     const auth = req.header("Authorization");
-    console.log('headers: ', req.headers);
+    // console.log('headers: ', req.headers);
     if(!auth) {
 
         console.log('no authorization?');
@@ -21,10 +24,12 @@ apiRouter.use(async (req, res, next) => {
         const token = auth.slice(prefix.length);
         console.log('Token: ', token);
         try {
-            const {id} = jwt.verify(token, JWT_SECRET);
-
+            console.log('about to retrieve id!');
+            const {id} = jwt.verify(token, `${JWT_SECRET}`);
+            console.log('retrieved ID from token: ', id);
             if (id) {
                 req.user = await getUserById(id);
+                console.log('retrieved user: ', req.user);
                 next();
             }
         } catch (error) {

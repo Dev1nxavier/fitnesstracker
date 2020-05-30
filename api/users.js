@@ -68,8 +68,8 @@ usersRouter.post('/login', async (req, res, next)=>{
           if (passwordMatch) {
             const id = user.id;
             
-            console.log('successfully matched password!');
-            const token = jwt.sign({id, username}, `${JWT_SECRET}`);  
+            console.log('successfully matched password! id: ', id);
+            const token = jwt.sign({id: id, username}, `${JWT_SECRET}`);  
 
             console.log('Token: ', token);
             res.send({message: 'SUCCESS', token});
