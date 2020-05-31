@@ -8,6 +8,7 @@ routinesRouter.get('/', async (req, res, next) => {
     try {
         const routines = await getPublicRoutines();
         res.send({
+            message: 'retrieved routines',
             data: routines
         });
     } catch (error) {
@@ -18,18 +19,21 @@ routinesRouter.get('/', async (req, res, next) => {
 routinesRouter.post('/', requireUser, async (req, res, next) => {
     try {
         console.log("Entered /POST routines")
-        // const body = {creatorId, publica, name, goal} = req.body;
-        console.log(req.body);
+        const body = {isPublic, name, goal} = req.body;
+        const creatorId = requireUser.user.id
+        console.log(body);
 
         const routine = await createRoutine({
             creatorId,
-            publica,
+            isPublic,
             name,
             goal,
         })
 
+        console.log('')
         req.send({
-            routine,
+            message: 'new routine created',
+            routine: routine,
         })
     } catch (error) {
         next(error);
@@ -38,7 +42,7 @@ routinesRouter.post('/', requireUser, async (req, res, next) => {
 
 routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
 
-    const body = { id, creatorId, publica, name, goal } = req.body;
+    const body = { id, creatorId, isPublic, name, goal } = req.body;
 
     console.log('Entered /routineId PATCH, req body: ', body);
 
@@ -46,8 +50,8 @@ routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
         console.log("permission to edit routine granted");
         const { routinesId } = req.params;
         const updateFields = {};
-        if(publica){
-            updateFields.publica = true;
+        if(isPublic){
+            updateFields.isPublic = true;
         }
 
         if (name) {

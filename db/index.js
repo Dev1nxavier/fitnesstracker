@@ -66,6 +66,8 @@ async function getUserById(Id) {
 }
 
 async function createActivity({name, description}) {
+    console.log('entering createActivity');
+
     try {
         const {rows} = await db.query(`
             INSERT INTO activities("name", "description")
@@ -159,7 +161,7 @@ async function getPublicRoutines() {
     }
 }
 
-async function createRoutine({creatorId, publica, name, goal}) {
+async function createRoutine({creatorId, isPublic, name, goal}) {
     console.log("Entering createRoutine");
 
     try {
@@ -167,7 +169,7 @@ async function createRoutine({creatorId, publica, name, goal}) {
             INSERT INTO routines ("creatorId", "public", "name", "goal")
             VALUES($1, $2, $3, $4)
             RETURNING *;
-        `, [creatorId, publica, name, goal]);
+        `, [creatorId, isPublic, name, goal]);
 
         console.log("Your new routine: ", rows);
         return rows;
