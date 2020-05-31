@@ -99,8 +99,6 @@ async function getAllActivities() {
 
 //works but can't figure out how to get name toLowerCase
 async function updateActivity(activityId, fields = {}) {    
-    // const {id} = fields;
-    // delete fields.id;
 
     const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
@@ -160,6 +158,57 @@ async function getPublicRoutines() {
     }
 }
 
+// getAllRoutinesByUser
+// getAllRoutinesByUser({ username })
+// select and return an array of all routines made by user, include their activities
+async function getAllRoutinesByUser({username}) {
+    console.log("Entering getAllRoutinesByUser")
+    const {id} = getUserByUsername(username);
+    console.log('User ID: ', id);
+
+    try {
+        const {rows: [routines]} = await db.query(`
+            SELECT *
+            FROM routines
+            WHERE "creatorId"=${id};
+        `)
+
+        console.log("your routines by User: ", routines);
+        return routines;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// getPublicRoutinesByUser
+// getPublicRoutinesByUser({ username })
+// select and return an array of public routines made by user, include their activities
+async function getPublicRoutinesByUser({username}) {
+    console.log("Entering getPublicRoutinesByUser")
+    const {id} = getUserByUsername(username);
+    console.log('User ID: ', id);
+
+    try {
+        //How to do this?
+        const {rows: [routines]} = await db.query(`
+            SELECT *
+            FROM routines
+            WHERE ;
+        `)
+
+        console.log("your public routines by User: ", routines);
+        return routines;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// getPublicRoutinesByActivity
+// getPublicRoutinesByActivity({ activityId })
+// select and return an array of public routines which have a specific activityId in their routine_activities join, include their activities
+
+
+
 async function createRoutine({creatorId, isPublic, name, goal}) {
     console.log("Entering createRoutine");
 
@@ -175,22 +224,6 @@ async function createRoutine({creatorId, isPublic, name, goal}) {
     } catch (error) {
         throw error;
     }
-}
-
-//helper stringify function 
-function setStringFunction(fields) {
-    const stringFields = Object.keys(fields).map((key, index)=>{
-         `"${key}" = $${index+1}`
-    }).join(', ');
-
-    if (stringFields.length === 0) {
-        return; 
-    }
-
-    const queryString = Object.values(fields);
-
-    const newFields = {stringFields, queryString};
-    return newFields;
 }
 
 async function updateRoutine(routinesId, fields ={}) {
@@ -211,6 +244,21 @@ async function updateRoutine(routinesId, fields ={}) {
     return rows;
 }
 
+//helper stringify function 
+function setStringFunction(fields) {
+    const stringFields = Object.keys(fields).map((key, index)=>{
+         `"${key}" = $${index+1}`
+    }).join(', ');
+
+    if (stringFields.length === 0) {
+        return; 
+    }
+
+    const queryString = Object.values(fields);
+
+    const newFields = {stringFields, queryString};
+    return newFields;
+}
 
 module.exports={
     db,
