@@ -98,10 +98,9 @@ async function getAllActivities() {
 }
 
 //works but can't figure out how to get name toLowerCase
-async function updateActivity(fields = {}) {    
-    const {id} = fields;
-    delete fields.id;
-    // fields.name.toLowerCase();
+async function updateActivity(activityId, fields = {}) {    
+    // const {id} = fields;
+    // delete fields.id;
 
     const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
@@ -112,13 +111,13 @@ async function updateActivity(fields = {}) {
     }
 
     console.log('Entered updateActivity')
-    console.log('params: ', id, Object.values(fields));
+    console.log('params: ', activityId, Object.values(fields));
 
     try {
         const {rows} = await db.query(`
             UPDATE activities
             SET ${setString}
-            WHERE id=${id}
+            WHERE id=${activityId}
             RETURNING *;
         `, Object.values(fields));
 
@@ -194,7 +193,7 @@ function setStringFunction(fields) {
     return newFields;
 }
 
-async function updateRoutine(routineId, fields ={}) {
+async function updateRoutine(routinesId, fields ={}) {
 
     console.log('Entered updateRoutine in db');
 
@@ -204,7 +203,7 @@ async function updateRoutine(routineId, fields ={}) {
     const {rows} = await db.query(`
         UPDATE routines
         SET (${setString})
-        WHERE id = ${routineId};
+        WHERE id = ${routinesId};
     `, [queryString]);
 
     console.log('Exiting UpdateRoutine in db');

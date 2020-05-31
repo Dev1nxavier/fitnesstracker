@@ -19,9 +19,10 @@ routinesRouter.get('/', async (req, res, next) => {
 routinesRouter.post('/', requireUser, async (req, res, next) => {
     try {
         console.log("Entered /POST routines")
-        const body = {isPublic, name, goal} = req.body;
-        const creatorId = requireUser.user.id
-        console.log(body);
+        const {isPublic, name, goal} = req.body;
+        console.log("Request body: ", req.body);
+        const creatorId = req.user.id
+        console.log("creator ID: ", creatorId)
 
         const routine = await createRoutine({
             creatorId,
@@ -30,7 +31,6 @@ routinesRouter.post('/', requireUser, async (req, res, next) => {
             goal,
         })
 
-        console.log('')
         req.send({
             message: 'new routine created',
             routine: routine,
@@ -42,13 +42,13 @@ routinesRouter.post('/', requireUser, async (req, res, next) => {
 
 routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
 
-    const body = { id, creatorId, isPublic, name, goal } = req.body;
+    const {creatorId, isPublic, name, goal } = req.body;
+    const { routinesId } = req.params;
 
-    console.log('Entered /routineId PATCH, req body: ', body);
+    console.log('Entered /routinesId PATCH, req body: ', req.body);
 
     if(requireUser.user.id === creatorId){
         console.log("permission to edit routine granted");
-        const { routinesId } = req.params;
         const updateFields = {};
         if(isPublic){
             updateFields.isPublic = true;
@@ -64,11 +64,12 @@ routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
 
         try {
             
-            const routine = await updateRoutine(id, updateFields);
+            const routine = await updateRoutine(routinesId, updateFields);
 
             if (routine) {
-                res.send({message: 'updated routine. ',
-                  data: routine
+                res.send({
+                    message: 'updated routine. ',
+                    data: routine
                 });
             }else(next({
                 name: "FailToUpdateRoutineError",

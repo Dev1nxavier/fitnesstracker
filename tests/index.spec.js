@@ -113,7 +113,6 @@ describe('UserRouter', ()=>{
 
     it('creates a routine', async () => {
         const data = {
-            creatorId: 1,
             isPublic: false,
             name: "The Backes Pump Method",
             goal: "To get soooo jacked with minimal exogenous hormones needed"
@@ -125,8 +124,8 @@ describe('UserRouter', ()=>{
             }
         );
 
-        // expect(res.data.length!==0).toEqual(true);
-        expect(typeof res.data.message).toEqual('string');
+        expect(res.data.length!==0).toEqual(true);
+        // expect(typeof res.data.message).toEqual('string');
     });
     
 })

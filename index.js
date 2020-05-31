@@ -1,26 +1,18 @@
-
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
-
 const { db } = require('./db');
+const cors = require('cors');
+const express = require('express');
+const server = express();
+const morgan = require('morgan');
+const apiRouter = require ('./api');
 
 db.connect();
 
-const cors = require('cors');
-
-const express = require('express');
-
-const server = express();
-
 server.use(express.json());
-
-const morgan = require('morgan');
-
 server.use(morgan('dev')); //use morgan in development environment only
 server.use(cors());
-
-const apiRouter = require ('./api');
 server.use('/api', apiRouter);
 
 server.listen(PORT, ()=>{

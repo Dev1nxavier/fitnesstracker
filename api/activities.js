@@ -44,11 +44,11 @@ activitiesRouter.post('/', requireUser, async(req, res, next) => {
 // PATCH /activities/:activityId (*)
 activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
     const {activityId} = req.params;
-    const body = {name, description} = req.body;
+    const {name, description} = req.body;
     const updateFields = {};
 
     console.log("Activity ID: ", activityId);
-    console.log("Update to be applied to Activity: ", body);
+    console.log("Update to be applied to Activity: ", req.body);
 
     if (name) {
         updateFields.name = name;
@@ -59,12 +59,13 @@ activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
     }
 
     try {
-        const newActivity = await updateActivity({id: activityId, name: name, description: description});
+        const newActivity = await updateActivity(activityId, updateFields);
 
         if (newActivity) {
             res.send({
-                newActivity,
-            })
+                message: 'updated activity',
+                data: newActivity,
+            });
         } else {
             next({
                 name: "noNewActivityError",
