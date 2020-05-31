@@ -159,8 +159,8 @@ async function getPublicRoutines() {
 }
 
 // getAllRoutinesByUser
-// getAllRoutinesByUser({ username })
 // select and return an array of all routines made by user, include their activities
+//important point: must include the activities associated with the routine.
 async function getAllRoutinesByUser({username}) {
     console.log("Entering getAllRoutinesByUser")
     const {id} = getUserByUsername(username);
@@ -181,8 +181,8 @@ async function getAllRoutinesByUser({username}) {
 }
 
 // getPublicRoutinesByUser
-// getPublicRoutinesByUser({ username })
 // select and return an array of public routines made by user, include their activities
+//important point: must include the activities associated with the routine.
 async function getPublicRoutinesByUser({username}) {
     console.log("Entering getPublicRoutinesByUser")
     const {id} = getUserByUsername(username);
@@ -193,7 +193,7 @@ async function getPublicRoutinesByUser({username}) {
         const {rows: [routines]} = await db.query(`
             SELECT *
             FROM routines
-            WHERE ;
+            WHERE "creatorId"=${id} AND public =true;
         `)
 
         console.log("your public routines by User: ", routines);
@@ -204,8 +204,12 @@ async function getPublicRoutinesByUser({username}) {
 }
 
 // getPublicRoutinesByActivity
-// getPublicRoutinesByActivity({ activityId })
 // select and return an array of public routines which have a specific activityId in their routine_activities join, include their activities
+//important point: must include the activities associated with the routine.
+//pending routine_activities
+// async function getPublicRoutinesByActivity({ activityId }) {
+
+// }
 
 
 

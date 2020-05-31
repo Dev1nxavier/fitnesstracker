@@ -40,6 +40,7 @@ routinesRouter.post('/', requireUser, async (req, res, next) => {
     }
 })
 
+//can't just pass in creatorId in the request like we're doing. creatorId would be the creator of routine with id of routinesId and then would be matched against the current logged in user. Any thoughts on best way to get the creatorId of this routine? Should this be done in the db methods or here?
 routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
 
     const {creatorId, isPublic, name, goal } = req.body;
@@ -47,6 +48,7 @@ routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
 
     console.log('Entered /routinesId PATCH, req body: ', req.body);
 
+    //shouldn't this be req.user.id?
     if(requireUser.user.id === creatorId){
         console.log("permission to edit routine granted");
         const updateFields = {};
