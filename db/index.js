@@ -326,7 +326,7 @@ async function destroyRoutine(id) {
         console.log('Routine deleted: ', routine);
         return routine;
     } catch (error) {
-        
+        throw error;
     }
 }
 
