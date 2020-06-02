@@ -63,6 +63,7 @@ async function getUserById(Id) {
     }
 }
 
+//does this need to be rewritten similarly to juicebox - createTags or maybe make createActivityList?
 async function createActivity({name, description}) {
     console.log('entering createActivity');
 
@@ -75,19 +76,6 @@ async function createActivity({name, description}) {
 
         console.log('name: ', name, 'description: ', description);
         console.log(rows);
-
-        return rows;
-    } catch (error) {
-        throw error;
-    }
-}
-
-async function getAllActivities() {
-    try {
-        const {rows} = await db.query(`
-            SELECT *
-            FROM activities;
-        `);
 
         return rows;
     } catch (error) {
@@ -120,6 +108,57 @@ async function updateActivity(activityId, fields = {}) {
     } catch (error) {
         throw error;
     }
+}
+
+async function getAllActivities() {
+    try {
+        const {rows} = await db.query(`
+            SELECT *
+            FROM activities;
+        `);
+
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
+//still need to attach activities to routines. Awaiting addActivityToRoutine
+async function createRoutine({creatorId, isPublic, name, goal}) {
+    console.log("Entering createRoutine");
+
+    try {
+        const {rows: [routine]} = await db.query(`
+            INSERT INTO routines ("creatorId", "public", "name", "goal")
+            VALUES($1, $2, $3, $4)
+            RETURNING *;
+        `, [creatorId, isPublic, name, goal]);
+
+        //update to use addActivityToRoutine and delete these
+        console.log("Your new routine: ", rows);
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
+
+//should be fine? Doesn't need to update routine_activities in any way
+async function updateRoutine(routinesId, fields ={}) {
+
+    console.log('Entered updateRoutine in db');
+
+    const { setString, queryString } = setStringFunction(fields);
+
+
+    const {rows} = await db.query(`
+        UPDATE routines
+        SET (${setString})
+        WHERE id = ${routinesId};
+    `, [queryString]);
+
+    console.log('Exiting UpdateRoutine in db');
+
+    return rows;
 }
 
 async function getAllRoutines() {
@@ -164,8 +203,7 @@ async function getPublicRoutines() {
 
 // getAllRoutinesByUser
 // select and return an array of all routines made by user, include their activities
-//important point: must include the activities associated with the routine.
-//not even close: needs to be similar to post/tag relationship
+//important point: must include the activities associated with the routine. needs to be similar to post/tag relationship
 async function getAllRoutinesByUser({username}) {
     console.log("Entering getAllRoutinesByUser")
     const {id} = getUserByUsername(username);
@@ -232,7 +270,7 @@ async function getRoutineById(routineId) {
         `, [routineId]);
 
         console.log('routines still works 1')
-        //CHECK FUNCTION: SELECT * ORR SELECT activities.* ??
+        //CHECK FUNCTION: SELECT * OR SELECT activities.* ??
         const { rows: activities } = await db.query(`
             SELECT *
             FROM activities
@@ -255,41 +293,6 @@ async function getRoutineById(routineId) {
     } catch (error) {
         throw error;
     }
-}
-
-async function createRoutine({creatorId, isPublic, name, goal}) {
-    console.log("Entering createRoutine");
-
-    try {
-        const {rows} = await db.query(`
-            INSERT INTO routines ("creatorId", "public", "name", "goal")
-            VALUES($1, $2, $3, $4)
-            RETURNING *;
-        `, [creatorId, isPublic, name, goal]);
-
-        console.log("Your new routine: ", rows);
-        return rows;
-    } catch (error) {
-        throw error;
-    }
-}
-
-async function updateRoutine(routinesId, fields ={}) {
-
-    console.log('Entered updateRoutine in db');
-
-    const { setString, queryString } = setStringFunction(fields);
-
-
-    const {rows} = await db.query(`
-        UPDATE routines
-        SET (${setString})
-        WHERE id = ${routinesId};
-    `, [queryString]);
-
-    console.log('Exiting UpdateRoutine in db');
-
-    return rows;
 }
 
 async function destroyRoutineActivity(id) {
