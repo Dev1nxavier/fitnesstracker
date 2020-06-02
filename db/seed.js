@@ -1,4 +1,4 @@
-const { db, createUser, createActivity, createRoutine } = require('./index');
+const { db, createUser, createActivity, createRoutine, addActivityToRoutine, updateActivityToRoutine , createRoutineActivity, getAllActivities, getAllRoutines} = require('./index');
 
 const faker = require('faker');
 
@@ -59,7 +59,8 @@ async function buildInitialDb() {
             "routineId" INTEGER REFERENCES routines(id),
             "activityId" INTEGER REFERENCES activities(id),
             duration INTEGER,
-            count INTEGER
+            count INTEGER,
+            UNIQUE ("routineId", "activityId")
             );
         `)
 
@@ -113,6 +114,35 @@ async function initializeRoutines() {
     }
 }
 
+
+async function testDb() {
+
+    console.log('testing db');
+
+    const activityOne = await createActivity({name:"upright rows", description:"Bend over bro!"});
+
+    const activityTwo = await createActivity({name:"Incline DB Press", description:"Stay over your chest"});
+
+    const activityThree = await createActivity({name:"Hammer Curls", description:"On an incline bench for Brachialis development"});
+
+
+    console.log('activity created!', activityOne);
+
+    const routinesList = await getAllRoutines(); //get array of all routines in activities table
+
+    console.log('all available routines: ', routinesList);
+
+    console.log('adding activity to routine');
+
+    const activityList = [activityOne, activityTwo, activityThree];
+
+    // console.log('Create one routineActivity');
+    // const routineActivity = await createRoutineActivity(1,1,100, 50);
+    const newActivity = addActivityToRoutine(routinesList[1].id, activityList);
+
+    return newActivity;
+}
+
 async function startDB() {
   try {
     db.connect();
@@ -122,6 +152,7 @@ async function startDB() {
     await initializeUsers();
     await initializeActivities();
     await initializeRoutines();
+    await testDb();
   } catch (error) {  
     console.log("Error during startDB")
     throw error;

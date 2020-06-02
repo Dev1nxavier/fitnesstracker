@@ -128,6 +128,46 @@ describe('UserRouter', ()=>{
 
         expect(res.data.length).toEqual(true);//res.length or res.data.length?
     });
+
+    it('sends get request to routine_activities route', async ()=>{
+        const res = await axios.get(`http://localhost:3000/api/routine_activities`);
+
+        expect(res.data.data).toEqual('OK');
+    })
+
+    
+
+    it('updates a routine activity', async ()=>{
+
+        console.log('TEST PATCH ROUTINE ACTIVITIES');
+        const data = {
+            routineId: 1,
+            activityId: 1,
+            duration: Math.floor(Math.random() * 11),
+            count: Math.floor(Math.random() * 11)
+        }
+
+        const res = await axios.patch(`http://localhost:3000/api/routine_activities/2`,data,
+            {
+                headers: {'Authorization': `Bearer ${token}`},
+            }
+        )
+
+        console.log(res.data.message)
+        expect(res.data.message).toEqual('OK');
+    })
+
+    it('permanently deletes a routine activity from a routine', async ()=>{
+        const data = {id: 1};
+
+        const res = await axios.delete(`http://localhost:3000/api/routine_activities/${1}`, data,
+            {
+                headers: {'Authorization': `Bearer ${token}`},
+            }
+        )
+        expect(res.data.status).toEqual(true);
+
+    })
     
 })
 

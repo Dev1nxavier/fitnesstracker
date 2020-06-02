@@ -16,7 +16,7 @@ activitiesRouter.get('/', async(req, res) => {
     const activities = await getAllActivities();
 
     res.send({
-        activities,
+        activities
     });
 });
 

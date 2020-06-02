@@ -28,7 +28,7 @@ routinesRouter.post('/', requireUser, async (req, res, next) => {
             goal,
         })
 
-        req.send({
+        res.send({
             routine,
         })
     } catch (error) {

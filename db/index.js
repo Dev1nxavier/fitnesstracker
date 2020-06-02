@@ -67,16 +67,16 @@ async function getUserById(Id) {
 
 async function createActivity({name, description}) {
     try {
-        const {rows} = await db.query(`
+        const {rows: [activity ]} = await db.query(`
             INSERT INTO activities("name", "description")
             VALUES($1, $2)
             RETURNING *;
         `, [name.toLowerCase(), description]); //laziest way to do this. Best way?
 
         console.log('name: ', name, 'description: ', description);
-        console.log(rows);
+        console.log(activity);
 
-        return rows;
+        return activity;
     } catch (error) {
         throw error;
     }
@@ -178,17 +178,19 @@ async function createRoutine({creatorId, publica, name, goal}) {
 
 //helper stringify function 
 function setStringFunction(fields) {
-    const stringFields = Object.keys(fields).map((key, index)=>{
-         `"${key}" = $${index+1}`
-    }).join(', ');
 
-    if (stringFields.length === 0) {
+    const setString = Object.keys(fields).map((key, index)=>{
+       return  `"${key}" = $${index+1}`}).join(', ');
+
+    console.log('stringFields: ',setString);
+
+    if (setString.length === 0) {
         return; 
     }
 
     const queryString = Object.values(fields);
 
-    const newFields = {stringFields, queryString};
+    const newFields = {setString, queryString};
     return newFields;
 }
 
@@ -210,6 +212,124 @@ async function updateRoutine(routineId, fields ={}) {
     return rows;
 }
 
+async function createRoutineActivity(routineId, activityId, count=4, duration=4) {
+
+    console.log('Entered createRoutineActivity');
+
+    try {
+        
+        const { rows }= await db.query(`
+            INSERT INTO routine_activities("routineId", "activityId", "duration", "count" )
+            VALUES($1, $2, $3, $4)
+            ON CONFLICT("routineId", "activityId") DO NOTHING
+            returning *;
+        `, [routineId, activityId, count, duration]);
+
+        console.log("Exiting createRoutineActivity successfully");
+
+        return rows;
+
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function getRoutineById(routineId) {
+    try {
+        const { rows: [ routine ] } = await db.query(`
+            SELECT * FROM routines
+            WHERE id = $1;
+        `, [routineId]);
+
+        //CHECK FUNCTION: SELECT * ORR SELECT activities.* ??
+        const { rows: activities } = await db.query(`
+            SELECT *
+            FROM activities
+            JOIN routine_activities ON activities.id=routine_activities."routineId"
+            WHERE routine_activities."routineId"=$1;
+        `, [routineId]);
+
+        const { rows: [author] } = await db.query(`
+            SELECT id, username
+            FROM users
+            WHERE id=$1;
+        `, [routine.creatorId]);
+
+        routine.activities = activities;
+        routine.author = author;
+
+        return routine;
+
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function addActivityToRoutine(routineId, activityList) {
+
+    console.log('entered addActivityToRoutine', activityList);
+    try {
+        const createRoutineActivityPromises = activityList.map(async activity=>{
+
+            return await createRoutineActivity(routineId,activity.id,4, 4)
+        });
+
+       const promise = await Promise.all(createRoutineActivityPromises);
+        console.log('Promises Promises... ',promise);
+
+        return await getRoutineById(routineId); 
+
+     
+
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function updateActivityToRoutine(id, fields={}) {
+    console.log('Entered updateRoutineActivity');
+    const { setString, queryString } = setStringFunction(fields);
+
+    console.log(setString);
+    console.log(queryString);
+    try {
+        console.log('Updating routine activity...');
+
+        const { rows: [routineActivity] } = await db.query(`
+        UPDATE routine_activities
+        SET ${setString}
+        WHERE "id" = ${id}
+        RETURNING *;
+    `,queryString);
+
+        console.log('routine activity updated!', routineActivity);
+
+        return routineActivity;
+        
+    } catch (error) {
+        throw error;
+    }
+    
+}
+
+async function destroyRoutineActivity(id) {
+    
+    console.log('Entered destroyRoutineActivity');
+    try {
+        const {rows: [activity]} = await db.query(`
+        DELETE FROM routine_activities
+        WHERE id = ${id};
+    `)
+        return activity;
+
+    console.log('Activity deleted!');
+    } catch (error) {
+        throw error;
+    }
+    
+}
+
+
 
 module.exports={
     db,
@@ -223,4 +343,8 @@ module.exports={
     getAllRoutines,
     getPublicRoutines,
     updateRoutine,
+    updateActivityToRoutine,
+    addActivityToRoutine,
+    destroyRoutineActivity,
+    createRoutineActivity,
 };
