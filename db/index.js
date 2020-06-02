@@ -1,8 +1,5 @@
 const { Client } = require('pg');
-
 const db = new Client('postgres://localhost:5432/fitness-dev');
-
-const faker = require('faker');
 
 async function createUser({username, password}){
 
@@ -59,6 +56,7 @@ async function getUserById(Id) {
             WHERE id = $1;
         `, [Id]);
         console.log('retrieved user: ', user);
+
         return user;
     } catch (error) {
         throw error
@@ -97,7 +95,6 @@ async function getAllActivities() {
     }
 }
 
-//works but can't figure out how to get name toLowerCase
 async function updateActivity(activityId, fields = {}) {    
 
     const setString = Object.keys(fields)
@@ -129,13 +126,17 @@ async function getAllRoutines() {
     console.log("Entering get all routines");
 
     try {
-        const {rows} = await db.query(`
-            SELECT *
+        const {rows: routineIds} = await db.query(`
+            SELECT id
             FROM routines
         `);
 
-        console.log('Your routines: ', rows);
-        return rows;
+        const routines = await Promise.all(
+            routineIds.map((routine) => getRoutineById(routine.id))
+        );
+
+        console.log('Your routines: ', routines);
+        return routines;
     } catch (error) {
         throw error;
     }
@@ -143,13 +144,16 @@ async function getAllRoutines() {
 
 async function getPublicRoutines() {
     console.log("Entering get public routines");
-
     try {
-        const {rows: [routines]} = await db.query(`
-            SELECT *
+        const {rows: routineIds} = await db.query(`
+            SELECT id
             FROM routines
             WHERE public =true;
         `);
+
+        const routines = await Promise.all(
+            routineIds.map((routine) => getRoutineById(routine.id))
+        );
 
         console.log('Your public routines: ', routines);
         return routines;
@@ -161,17 +165,22 @@ async function getPublicRoutines() {
 // getAllRoutinesByUser
 // select and return an array of all routines made by user, include their activities
 //important point: must include the activities associated with the routine.
+//not even close: needs to be similar to post/tag relationship
 async function getAllRoutinesByUser({username}) {
     console.log("Entering getAllRoutinesByUser")
     const {id} = getUserByUsername(username);
     console.log('User ID: ', id);
 
     try {
-        const {rows: [routines]} = await db.query(`
-            SELECT *
+        const {rows: routineIds} = await db.query(`
+            SELECT id
             FROM routines
             WHERE "creatorId"=${id};
         `)
+
+        const routines = await Promise.all(
+            routineIds.map((routine) => getRoutineById(routine.id))
+        );
 
         console.log("your routines by User: ", routines);
         return routines;
@@ -189,12 +198,15 @@ async function getPublicRoutinesByUser({username}) {
     console.log('User ID: ', id);
 
     try {
-        //How to do this?
-        const {rows: [routines]} = await db.query(`
-            SELECT *
+        const {rows: routineIds} = await db.query(`
+            SELECT id
             FROM routines
             WHERE "creatorId"=${id} AND public =true;
         `)
+
+        const routines = await Promise.all(
+            routineIds.map((routine) => getRoutineById(routine.id))
+        );
 
         console.log("your public routines by User: ", routines);
         return routines;
@@ -211,7 +223,39 @@ async function getPublicRoutinesByUser({username}) {
 
 // }
 
+async function getRoutineById(routineId) {
+    try {
+        const { rows: [ routine ] } = await db.query(`
+            SELECT * 
+            FROM routines
+            WHERE id = $1;
+        `, [routineId]);
 
+        console.log('routines still works 1')
+        //CHECK FUNCTION: SELECT * ORR SELECT activities.* ??
+        const { rows: activities } = await db.query(`
+            SELECT *
+            FROM activities
+            JOIN routine_activities ON activities.id=routine_activities.“routineId”
+            WHERE routine_activities.“routineId”=$1;
+        `, [routineId]);
+
+        console.log('routines still works 2')
+        const { rows: [author] } = await db.query(`
+            SELECT id, username
+            FROM users
+            WHERE id=$1;
+        `, [routine.creatorId]);
+
+        console.log('routines still works 3')
+        routine.activities = activities;
+        routine.author = author;
+        console.log('routine: ', routine);
+        return routine;
+    } catch (error) {
+        throw error;
+    }
+}
 
 async function createRoutine({creatorId, isPublic, name, goal}) {
     console.log("Entering createRoutine");
@@ -248,6 +292,22 @@ async function updateRoutine(routinesId, fields ={}) {
     return rows;
 }
 
+async function destroyRoutineActivity(id) {
+    console.log('Entered destroyRoutineActivity');
+
+    try {
+        const {rows: [activity]} = await db.query(`
+        DELETE FROM routine_activities
+        WHERE id = ${id};
+    `)
+
+    console.log('Activity deleted!');
+    return activity;
+    } catch (error) {
+        throw error;
+    }
+}
+
 //helper stringify function 
 function setStringFunction(fields) {
     const stringFields = Object.keys(fields).map((key, index)=>{
@@ -276,4 +336,6 @@ module.exports={
     getAllRoutines,
     getPublicRoutines,
     updateRoutine,
+    getUserById,
+    getRoutineById,
 };

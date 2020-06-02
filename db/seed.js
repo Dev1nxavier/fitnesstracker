@@ -72,7 +72,6 @@ async function initializeUsers() {
     try {
         console.log('starting to create users...');
 
-        //Sorry, the OCD...
         const fakeTwo = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
 
         const fakeThree = await createUser({username: faker.internet.userName(), password: faker.internet.password()});

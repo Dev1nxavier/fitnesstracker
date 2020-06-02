@@ -84,7 +84,7 @@ describe('UserRouter', ()=>{
             }
         )
 
-        expect(true);
+        expect(res.data.length!==0).toEqual(true);
     });
 
     it('updates an activity', async () => {
@@ -100,7 +100,7 @@ describe('UserRouter', ()=>{
             }
         )
 
-        expect(true);
+        expect(res.data.length!==0).toEqual(true);
     });
 
     it('grabs all routines', async () => {
@@ -124,6 +124,22 @@ describe('UserRouter', ()=>{
 
         expect(res.data.length!==0).toEqual(true);
     });
+
+    it('updates a routine', async () => {
+        const data = {
+            isPublic: true,
+            name: "Sean's Jazzersizer",
+            goal: "Let's sweat to the Oldies!"
+        }
+
+        const res = await axios.patch(`http://localhost:3000/api/routines/${2}`,data,
+            {
+                headers: {'Authorization': `Bearer ${token}`}
+            }
+        )
+
+        expect(res.data.length!==0).toEqual(true);
+    })
     
 })
 
