@@ -131,6 +131,11 @@ describe('UserRouter', ()=>{
         expect(res.data.data).toEqual('OK');
     })
 
+    it('creates a new routineActivity', async()=>{
+        const res = await axios.post(`http://localhost:3000/api/routine_activities`, {routineId: 1, activityId: 2, count: 20, duration: 300});
+
+        expect(res.data.status).toEqual('OK');
+    })
     
 
     it('updates a routine activity', async ()=>{
