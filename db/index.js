@@ -311,6 +311,25 @@ async function destroyRoutineActivity(id) {
     }
 }
 
+async function destroyRoutine(id) {
+    console.log('Entered destroyRoutine');
+
+    try {
+        //Is this valid and/or is there a better way to do this?
+        const {rows: [routine]} = await db.query(`
+            DELETE FROM routine_activities
+            WHERE "routineId" = ${id}
+            DELETE FROM routines
+            WHERE id = ${id};
+        `)
+
+        console.log('Routine deleted: ', routine);
+        return routine;
+    } catch (error) {
+        
+    }
+}
+
 //helper stringify function 
 function setStringFunction(fields) {
     const stringFields = Object.keys(fields).map((key, index)=>{
