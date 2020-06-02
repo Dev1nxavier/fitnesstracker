@@ -5,7 +5,7 @@ const routine_activitiesRouter = express.Router();
 const bodyParser = require('body-parser');
 routine_activitiesRouter.use(bodyParser.json());
 
-const { updateActivityToRoutine, addActivityToRoutine, destroyRoutineActivity } = require('../db');
+const { updateActivityToRoutine,destroyRoutineActivity, createRoutineActivity } = require('../db');
 
 const { requireUser } = require('./utils');
 
@@ -18,11 +18,25 @@ routine_activitiesRouter.get('/', async(req, res, next)=>{
     next();
 })
 
+routine_activitiesRouter.post('/', requireUser, async(req, res, next)=>{
+    console.log('Reached POST /routine_activities route');
+    const {routineId, activityId, count, duration} = req.body;
+
+    const newActivity = await createRoutineActivity(routineId, activityId, count, duration);
+
+    res.send({
+        message: 'Activity added to routine',
+        data: newActivity,
+        status: 'OK'
+    })
+
+})
+
 routine_activitiesRouter.patch('/:routineActivityId', requireUser, async (req, res, next)=>{
 
     //TODO: IF statement to ensure UserId= activity Author ID
     
-    console.log('Reached /routine_activities:activity');
+    console.log('Reached PATCH /routine_activities:activity');
 
     const { routineActivityId } = req.params;
     console.log(req.params);
@@ -56,7 +70,7 @@ routine_activitiesRouter.delete('/:routineActivitesId', async (req, res, next)=>
     const  {routineActivitiesId } = req.params;
 try {
     const { userId } = req.body
-    console.log('userId: ', userId, 'activity id: ', routineActivityId);
+    console.log('userId: ', userId, 'activity id: ', routineActivitiesId);
     const deleteActivity = await destroyRoutineActivity(routineActivitiesId);
     console.log('sending response');
     res.send({
