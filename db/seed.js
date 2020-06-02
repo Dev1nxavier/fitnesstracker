@@ -73,7 +73,6 @@ async function initializeUsers() {
     try {
         console.log('starting to create users...');
 
-        //Sorry, the OCD...
         const fakeTwo = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
 
         const fakeThree = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
@@ -106,8 +105,8 @@ async function initializeRoutines() {
     try {
         console.log('starting to create routines...');
 
-        const fakeOne = await createRoutine({creatorId: 1, publica: true, name: faker.hacker.noun(), goal: faker.hacker.phrase()});        const fakeTwo = await createRoutine({creatorId: 2, publica: false, name: faker.hacker.noun(), goal: faker.hacker.phrase()});
-
+        const fakeOne = await createRoutine({creatorId: 1, isPublic: true, name: faker.hacker.noun(), goal: faker.hacker.phrase()});
+        const fakeTwo = await createRoutine({creatorId: 2, isPublic: false, name: faker.hacker.noun(), goal: faker.hacker.phrase()});
 
     } catch (error) {
         throw error;

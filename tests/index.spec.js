@@ -36,7 +36,7 @@ describe('UserRouter', ()=>{
     })
 
     it('retrieves all users from user table', async()=>{
-        const users = await axios.get('http://localhost:3000/api/activities');//activities?
+        const users = await axios.get('http://localhost:3000/api/users');//activities?
 
         expect(users.length!==0).toEqual(true);
     })
@@ -84,14 +84,12 @@ describe('UserRouter', ()=>{
             }
         )
 
-        // const res = await axios.post('http://localhost:3000/api/activities', {name: 'curls', description: 'go heavy bro!'});
-
-        expect(true);
+        expect(res.data.length!==0).toEqual(true);
     });
 
     it('updates an activity', async () => {
         const data = {
-            name: 'boop',
+            name: 'DIPS',
             description: "They're horrible but great!"
         }
 
@@ -102,19 +100,18 @@ describe('UserRouter', ()=>{
             }
         )
 
-        expect(true);
+        expect(res.data.length!==0).toEqual(true);
     });
 
     it('grabs all routines', async () => {
         const res = await axios.get('http://localhost:3000/api/routines');
 
-        expect(res.data.length).toEqual(true);
+        expect(typeof res.data.message).toEqual('string');
     })
 
     it('creates a routine', async () => {
         const data = {
-            creatorId: 1,
-            publica: false,
+            isPublic: false,
             name: "The Backes Pump Method",
             goal: "To get soooo jacked with minimal exogenous hormones needed"
         };
@@ -122,11 +119,10 @@ describe('UserRouter', ()=>{
         const res = await axios.post(`http://localhost:3000/api/routines`, data,
             {
                 headers: {'Authorization': `Bearer ${token}`}
-
             }
         );
 
-        expect(res.data.length).toEqual(true);//res.length or res.data.length?
+        expect(res.data.length!==0).toEqual(true);
     });
 
     it('sends get request to routine_activities route', async ()=>{
@@ -166,10 +162,22 @@ describe('UserRouter', ()=>{
             }
         )
         expect(res.data.status).toEqual(true);
+    });
 
+    it('updates a routine', async () => {
+        const data = {
+            isPublic: true,
+            name: "Sean's Jazzersizer",
+            goal: "Let's sweat to the Oldies!"
+        }
+
+        const res = await axios.patch(`http://localhost:3000/api/routines/${2}`,data,
+            {
+                headers: {'Authorization': `Bearer ${token}`}
+            }
+        )
+
+        expect(res.data.length!==0).toEqual(true);
     })
     
 })
-
-
-

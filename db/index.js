@@ -1,8 +1,5 @@
 const { Client } = require('pg');
-
 const db = new Client('postgres://localhost:5432/fitness-dev');
-
-const faker = require('faker');
 
 async function createUser({username, password}){
 
@@ -59,13 +56,17 @@ async function getUserById(Id) {
             WHERE id = $1;
         `, [Id]);
         console.log('retrieved user: ', user);
+
         return user;
     } catch (error) {
         throw error
     }
 }
 
+//does this need to be rewritten similarly to juicebox - createTags or maybe make createActivityList?
 async function createActivity({name, description}) {
+    console.log('entering createActivity');
+
     try {
         const {rows: [activity ]} = await db.query(`
             INSERT INTO activities("name", "description")
@@ -77,6 +78,33 @@ async function createActivity({name, description}) {
         console.log(activity);
 
         return activity;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function updateActivity(activityId, fields = {}) {    
+
+    const setString = Object.keys(fields)
+    .map((key, index) => `"${key}"=$${index + 1}`)
+    .join(", ");
+
+    if (setString.length === 0) {
+        return;
+    }
+
+    console.log('Entered updateActivity')
+    console.log('params: ', activityId, Object.values(fields));
+
+    try {
+        const {rows} = await db.query(`
+            UPDATE activities
+            SET ${setString}
+            WHERE id=${activityId}
+            RETURNING *;
+        `, Object.values(fields));
+
+        return rows;
     } catch (error) {
         throw error;
     }
@@ -95,48 +123,59 @@ async function getAllActivities() {
     }
 }
 
-//works but can't figure out how to get name toLowerCase
-async function updateActivity(fields = {}) {    
-    const {id} = fields;
-    delete fields.id;
-    // fields.name.toLowerCase();
-
-    const setString = Object.keys(fields)
-    .map((key, index) => `"${key}"=$${index + 1}`)
-    .join(", ");
-
-    if (setString.length === 0) {
-        return;
-    }
-
-    console.log('Entered updateActivity')
-    console.log('params: ', id, Object.values(fields));
+//still need to attach activities to routines. Awaiting addActivityToRoutine
+async function createRoutine({creatorId, isPublic, name, goal}) {
+    console.log("Entering createRoutine");
 
     try {
-        const {rows} = await db.query(`
-            UPDATE activities
-            SET ${setString}
-            WHERE id=${id}
+        const {rows: [routine]} = await db.query(`
+            INSERT INTO routines ("creatorId", "public", "name", "goal")
+            VALUES($1, $2, $3, $4)
             RETURNING *;
-        `, Object.values(fields));
+        `, [creatorId, isPublic, name, goal]);
 
+        //update to use addActivityToRoutine and delete these
+        console.log("Your new routine: ", rows);
         return rows;
     } catch (error) {
         throw error;
     }
 }
 
+//should be fine? Doesn't need to update routine_activities in any way
+async function updateRoutine(routinesId, fields ={}) {
+
+    console.log('Entered updateRoutine in db');
+
+    const { setString, queryString } = setStringFunction(fields);
+
+
+    const {rows} = await db.query(`
+        UPDATE routines
+        SET (${setString})
+        WHERE id = ${routinesId};
+    `, [queryString]);
+
+    console.log('Exiting UpdateRoutine in db');
+
+    return rows;
+}
+
 async function getAllRoutines() {
     console.log("Entering get all routines");
 
     try {
-        const {rows} = await db.query(`
-            SELECT *
+        const {rows: routineIds} = await db.query(`
+            SELECT id
             FROM routines
         `);
 
-        console.log('Your routines: ', rows);
-        return rows;
+        const routines = await Promise.all(
+            routineIds.map((routine) => getRoutineById(routine.id))
+        );
+
+        console.log('Your routines: ', routines);
+        return routines;
     } catch (error) {
         throw error;
     }
@@ -144,13 +183,16 @@ async function getAllRoutines() {
 
 async function getPublicRoutines() {
     console.log("Entering get public routines");
-
     try {
-        const {rows: [routines]} = await db.query(`
-            SELECT *
+        const {rows: routineIds} = await db.query(`
+            SELECT id
             FROM routines
             WHERE public =true;
         `);
+
+        const routines = await Promise.all(
+            routineIds.map((routine) => getRoutineById(routine.id))
+        );
 
         console.log('Your public routines: ', routines);
         return routines;
@@ -159,18 +201,130 @@ async function getPublicRoutines() {
     }
 }
 
-async function createRoutine({creatorId, publica, name, goal}) {
-    console.log("Entering createRoutine");
+// getAllRoutinesByUser
+// select and return an array of all routines made by user, include their activities
+//important point: must include the activities associated with the routine. needs to be similar to post/tag relationship
+async function getAllRoutinesByUser({username}) {
+    console.log("Entering getAllRoutinesByUser")
+    const {id} = getUserByUsername(username);
+    console.log('User ID: ', id);
 
     try {
-        const {rows} = await db.query(`
-            INSERT INTO routines ("creatorId", "public", "name", "goal")
-            VALUES($1, $2, $3, $4)
-            RETURNING *;
-        `, [creatorId, publica, name, goal]);
+        const {rows: routineIds} = await db.query(`
+            SELECT id
+            FROM routines
+            WHERE "creatorId"=${id};
+        `)
 
-        console.log("Your new routine: ", rows);
-        return rows;
+        const routines = await Promise.all(
+            routineIds.map((routine) => getRoutineById(routine.id))
+        );
+
+        console.log("your routines by User: ", routines);
+        return routines;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// getPublicRoutinesByUser
+// select and return an array of public routines made by user, include their activities
+//important point: must include the activities associated with the routine.
+async function getPublicRoutinesByUser({username}) {
+    console.log("Entering getPublicRoutinesByUser")
+    const {id} = getUserByUsername(username);
+    console.log('User ID: ', id);
+
+    try {
+        const {rows: routineIds} = await db.query(`
+            SELECT id
+            FROM routines
+            WHERE "creatorId"=${id} AND public =true;
+        `)
+
+        const routines = await Promise.all(
+            routineIds.map((routine) => getRoutineById(routine.id))
+        );
+
+        console.log("your public routines by User: ", routines);
+        return routines;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// getPublicRoutinesByActivity
+// select and return an array of public routines which have a specific activityId in their routine_activities join, include their activities
+//important point: must include the activities associated with the routine.
+//pending routine_activities
+// async function getPublicRoutinesByActivity({ activityId }) {
+
+// }
+
+async function getRoutineById(routineId) {
+    try {
+        const { rows: [ routine ] } = await db.query(`
+            SELECT * 
+            FROM routines
+            WHERE id = $1;
+        `, [routineId]);
+
+        console.log('routines still works 1')
+        //CHECK FUNCTION: SELECT * OR SELECT activities.* ??
+        const { rows: activities } = await db.query(`
+            SELECT *
+            FROM activities
+            JOIN routine_activities ON activities.id=routine_activities.“routineId”
+            WHERE routine_activities.“routineId”=$1;
+        `, [routineId]);
+
+        console.log('routines still works 2')
+        const { rows: [author] } = await db.query(`
+            SELECT id, username
+            FROM users
+            WHERE id=$1;
+        `, [routine.creatorId]);
+
+        console.log('routines still works 3')
+        routine.activities = activities;
+        routine.author = author;
+        console.log('routine: ', routine);
+        return routine;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function destroyRoutineActivity(id) {
+    console.log('Entered destroyRoutineActivity');
+
+    try {
+        const {rows: [activity]} = await db.query(`
+        DELETE FROM routine_activities
+        WHERE id = ${id};
+    `)
+
+    console.log('Activity deleted!');
+    return activity;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function destroyRoutine(id) {
+    console.log('Entered destroyRoutine');
+
+    try {
+        //Is this valid and/or is there a better way to do this?
+        const {rows: [routine]} = await db.query(`
+            DELETE FROM routine_activities
+            WHERE "routineId" = ${id}
+            DELETE FROM routines
+            WHERE id = ${id};
+        `)
+
+        console.log('Routine deleted: ', routine);
+        return routine;
     } catch (error) {
         throw error;
     }
@@ -347,4 +501,6 @@ module.exports={
     addActivityToRoutine,
     destroyRoutineActivity,
     createRoutineActivity,
+    getUserById,
+    getRoutineById,
 };
