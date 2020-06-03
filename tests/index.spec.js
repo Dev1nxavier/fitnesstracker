@@ -103,6 +103,36 @@ describe('UserRouter', ()=>{
         expect(res.data.length!==0).toEqual(true);
     });
 
+    it('creates a new routineActivity', async()=>{
+
+        const data = {routineId: 2, activityId: 8, count: 20, duration: 300};
+
+        const res = await axios.post(`http://localhost:3000/api/routine_activities`, data, 
+            {
+                headers: {'Authorization': `Bearer ${token}`}
+            }
+        );
+
+        expect(res.data.status).toEqual('OK');
+    })
+
+    it('permanently deletes a routine activity from a routine', async ()=>{
+
+        const data = {
+            routineId: 2,
+            activityId: 8,
+        }
+
+        const res = await axios.delete(`http://localhost:3000/api/routine_activities/1`,data,
+            {
+                headers: {'Authorization': `Bearer ${token}`},
+            }
+        );
+
+        console.log(res.data.message)
+        expect(res.data.message).toEqual('OK');
+    });
+
     it('grabs all routines', async () => {
         const res = await axios.get('http://localhost:3000/api/routines');
 
@@ -131,11 +161,6 @@ describe('UserRouter', ()=>{
         expect(res.data.data).toEqual('OK');
     })
 
-    it('creates a new routineActivity', async()=>{
-        const res = await axios.post(`http://localhost:3000/api/routine_activities`, {routineId: 1, activityId: 2, count: 20, duration: 300});
-
-        expect(res.data.status).toEqual('OK');
-    })
     
 
     it('updates a routine activity', async ()=>{
@@ -157,17 +182,6 @@ describe('UserRouter', ()=>{
         console.log(res.data.message)
         expect(res.data.message).toEqual('OK');
     })
-
-    it('permanently deletes a routine activity from a routine', async ()=>{
-        const data = {id: 1};
-
-        const res = await axios.delete(`http://localhost:3000/api/routine_activities/${1}`, data,
-            {
-                headers: {'Authorization': `Bearer ${token}`},
-            }
-        )
-        expect(res.data.status).toEqual(true);
-    });
 
     it('updates a routine', async () => {
         const data = {

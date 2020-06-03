@@ -18,7 +18,7 @@ routine_activitiesRouter.get('/', async(req, res, next)=>{
     next();
 })
 
-routine_activitiesRouter.post('/', requireUser, async(req, res, next)=>{
+routine_activitiesRouter.post('/', requireUser, async (req, res, next)=>{
     console.log('Reached POST /routine_activities route');
     const {routineId, activityId, count, duration} = req.body;
 
@@ -64,14 +64,16 @@ try {
 
 })
 
-routine_activitiesRouter.delete('/:routineActivitesId', async (req, res, next)=>{
+routine_activitiesRouter.delete('/:routineActivitesId', requireUser, async (req, res, next)=>{
     //TODO: IF ensure user id matches author id
-    console.log('reached DELETE /routine_activitiesId route');
-    const  {routineActivitiesId } = req.params;
+    console.log('reached DELETE /:routine_activitiesId route');
 try {
+    const { routineId, activityId }= req.body.data;
+    console.log('routine ID: ',routineId,' activityID:', activityId);
+
     const { userId } = req.body
-    console.log('userId: ', userId, 'activity id: ', routineActivitiesId);
-    const deleteActivity = await destroyRoutineActivity(routineActivitiesId);
+
+    const deleteActivity = await destroyRoutineActivity(routineId, activityId);
     console.log('sending response');
     res.send({
         message: `activity deleted: ${deleteActivity}`,

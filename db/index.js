@@ -135,8 +135,8 @@ async function createRoutine({creatorId, isPublic, name, goal}) {
         `, [creatorId, isPublic, name, goal]);
 
         //update to use addActivityToRoutine and delete these
-        console.log("Your new routine: ", rows);
-        return rows;
+        console.log("Your new routine: ", routine);
+        return routine;
     } catch (error) {
         throw error;
     }
@@ -295,14 +295,14 @@ async function getRoutineById(routineId) {
     }
 }
 
-async function destroyRoutineActivity(id) {
+async function destroyRoutineActivity(routineId, activityId) {
     console.log('Entered destroyRoutineActivity');
 
     try {
         const {rows: [activity]} = await db.query(`
         DELETE FROM routine_activities
-        WHERE id = ${id};
-    `)
+        WHERE "routineId"=$1 AND "activityId"=$2;
+    `, [routineId, activityId]);
 
     console.log('Activity deleted!');
     return activity;
@@ -348,23 +348,6 @@ function setStringFunction(fields) {
     return newFields;
 }
 
-async function updateRoutine(routineId, fields ={}) {
-
-    console.log('Entered updateRoutine in db');
-
-    const { setString, queryString } = setStringFunction(fields);
-
-
-    const {rows} = await db.query(`
-        UPDATE routines
-        SET (${setString})
-        WHERE id = ${routineId};
-    `, [queryString]);
-
-    console.log('Exiting UpdateRoutine in db');
-
-    return rows;
-}
 
 async function createRoutineActivity(routineId, activityId, count=4, duration=4) {
 
@@ -388,36 +371,6 @@ async function createRoutineActivity(routineId, activityId, count=4, duration=4)
     }
 }
 
-async function getRoutineById(routineId) {
-    try {
-        const { rows: [ routine ] } = await db.query(`
-            SELECT * FROM routines
-            WHERE id = $1;
-        `, [routineId]);
-
-        //CHECK FUNCTION: SELECT * ORR SELECT activities.* ??
-        const { rows: activities } = await db.query(`
-            SELECT *
-            FROM activities
-            JOIN routine_activities ON activities.id=routine_activities."routineId"
-            WHERE routine_activities."routineId"=$1;
-        `, [routineId]);
-
-        const { rows: [author] } = await db.query(`
-            SELECT id, username
-            FROM users
-            WHERE id=$1;
-        `, [routine.creatorId]);
-
-        routine.activities = activities;
-        routine.author = author;
-
-        return routine;
-
-    } catch (error) {
-        throw error;
-    }
-}
 
 async function addActivityToRoutine(routineId, activityList) {
 
@@ -465,25 +418,6 @@ async function updateActivityToRoutine(id, fields={}) {
     }
     
 }
-
-async function destroyRoutineActivity(id) {
-    
-    console.log('Entered destroyRoutineActivity');
-    try {
-        const {rows: [activity]} = await db.query(`
-        DELETE FROM routine_activities
-        WHERE id = ${id};
-    `)
-        return activity;
-
-    console.log('Activity deleted!');
-    } catch (error) {
-        throw error;
-    }
-    
-}
-
-
 
 module.exports={
     db,
