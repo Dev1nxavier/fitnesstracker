@@ -70,7 +70,6 @@ describe('UserRouter', ()=>{
 
     })
 
-
     it('creates a new activity', async () => {
         const data = {
             name: 'Curls',
@@ -118,19 +117,25 @@ describe('UserRouter', ()=>{
 
     it('permanently deletes a routine activity from a routine', async ()=>{
 
+        // const data = {
+        //     routineId: 2,
+        //     activityId: 8,
+        // }
+
         const data = {
-            routineId: 2,
-            activityId: 8,
+            routineActivityId: 1
         }
 
-        const res = await axios.delete(`http://localhost:3000/api/routine_activities/1`,data,
+        const res = await axios.delete(`http://localhost:3000/api/routine_activities/1`,
             {
                 headers: {'Authorization': `Bearer ${token}`},
+                data
             }
+            
         );
 
         console.log(res.data.message)
-        expect(res.data.message).toEqual('OK');
+        expect(res.data.status).toEqual(true);
     });
 
     it('grabs all routines', async () => {
@@ -190,13 +195,23 @@ describe('UserRouter', ()=>{
             goal: "Let's sweat to the Oldies!"
         }
 
-        const res = await axios.patch(`http://localhost:3000/api/routines/${2}`,data,
+        const res = await axios.patch(`http://localhost:3000/api/routines/${3}`, data,
             {
                 headers: {'Authorization': `Bearer ${token}`}
             }
         )
 
-        expect(res.data.length!==0).toEqual(true);
+        expect(res.data.status).toEqual(true);
+    })
+
+    it('permanently deletes a routine and its activities', async () => {
+        const res = await axios.delete(`http://localhost:3000/api/routines/2`,
+        {
+            headers: {'Authorization': `Bearer ${token}`},
+        });
+
+        console.log(res.data.message);
+        expect(res.data.status).toEqual(true);
     })
     
 })

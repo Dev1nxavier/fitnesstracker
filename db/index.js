@@ -52,7 +52,8 @@ async function getUserById(Id) {
 
     try {
         const {rows: [user]} = await db.query(`
-            SELECT * FROM users
+            SELECT * 
+            FROM users
             WHERE id = $1;
         `, [Id]);
         console.log('retrieved user: ', user);
@@ -63,7 +64,6 @@ async function getUserById(Id) {
     }
 }
 
-//does this need to be rewritten similarly to juicebox - createTags or maybe make createActivityList?
 async function createActivity({name, description}) {
     console.log('entering createActivity');
 
@@ -123,7 +123,6 @@ async function getAllActivities() {
     }
 }
 
-//still need to attach activities to routines. Awaiting addActivityToRoutine
 async function createRoutine({creatorId, isPublic, name, goal}) {
     console.log("Entering createRoutine");
 
@@ -134,7 +133,6 @@ async function createRoutine({creatorId, isPublic, name, goal}) {
             RETURNING *;
         `, [creatorId, isPublic, name, goal]);
 
-        //update to use addActivityToRoutine and delete these
         console.log("Your new routine: ", routine);
         return routine;
     } catch (error) {
@@ -142,23 +140,31 @@ async function createRoutine({creatorId, isPublic, name, goal}) {
     }
 }
 
-//should be fine? Doesn't need to update routine_activities in any way
+//not working. failing on sql query? Why?
 async function updateRoutine(routinesId, fields ={}) {
-
-    console.log('Entered updateRoutine in db');
-
     const { setString, queryString } = setStringFunction(fields);
+    console.log('Entered updateRoutine in db');
+    console.log('routinesId: ', routinesId);
+    console.log('fields: ', fields);
+    console.log('setString: ', setString);
+    console.log('queryString: ', queryString);
 
+    try {
+        console.log('trying to update routine...');
 
-    const {rows} = await db.query(`
+        const {rows: [routine]} = await db.query(`
         UPDATE routines
-        SET (${setString})
-        WHERE id = ${routinesId};
-    `, [queryString]);
+        SET ${setString}
+        WHERE "id" = ${routinesId}
+        RETURNING *;
+        `, queryString);
+        
+        console.log('Routine updated: ', routine);
 
-    console.log('Exiting UpdateRoutine in db');
-
-    return rows;
+        return routine;
+    } catch (error) {
+        throw error;
+    }
 }
 
 async function getAllRoutines() {
@@ -201,9 +207,6 @@ async function getPublicRoutines() {
     }
 }
 
-// getAllRoutinesByUser
-// select and return an array of all routines made by user, include their activities
-//important point: must include the activities associated with the routine. needs to be similar to post/tag relationship
 async function getAllRoutinesByUser({username}) {
     console.log("Entering getAllRoutinesByUser")
     const {id} = getUserByUsername(username);
@@ -227,9 +230,6 @@ async function getAllRoutinesByUser({username}) {
     }
 }
 
-// getPublicRoutinesByUser
-// select and return an array of public routines made by user, include their activities
-//important point: must include the activities associated with the routine.
 async function getPublicRoutinesByUser({username}) {
     console.log("Entering getPublicRoutinesByUser")
     const {id} = getUserByUsername(username);
@@ -269,23 +269,20 @@ async function getRoutineById(routineId) {
             WHERE id = $1;
         `, [routineId]);
 
-        console.log('routines still works 1')
         //CHECK FUNCTION: SELECT * OR SELECT activities.* ??
         const { rows: activities } = await db.query(`
             SELECT *
             FROM activities
-            JOIN routine_activities ON activities.id=routine_activities.“routineId”
-            WHERE routine_activities.“routineId”=$1;
+            JOIN routine_activities ON activities.id=routine_activities."routineId"
+            WHERE routine_activities."routineId"=$1;
         `, [routineId]);
 
-        console.log('routines still works 2')
         const { rows: [author] } = await db.query(`
             SELECT id, username
             FROM users
             WHERE id=$1;
         `, [routine.creatorId]);
 
-        console.log('routines still works 3')
         routine.activities = activities;
         routine.author = author;
         console.log('routine: ', routine);
@@ -295,14 +292,14 @@ async function getRoutineById(routineId) {
     }
 }
 
-async function destroyRoutineActivity(routineId, activityId) {
+async function destroyRoutineActivity(routineActivityId) {
     console.log('Entered destroyRoutineActivity');
 
     try {
         const {rows: [activity]} = await db.query(`
         DELETE FROM routine_activities
-        WHERE "routineId"=$1 AND "activityId"=$2;
-    `, [routineId, activityId]);
+        WHERE id=$1;
+    `, [routineActivityId]);
 
     console.log('Activity deleted!');
     return activity;
@@ -316,12 +313,15 @@ async function destroyRoutine(id) {
 
     try {
         //Is this valid and/or is there a better way to do this?
-        const {rows: [routine]} = await db.query(`
+        const {rows: [activity]} = await db.query(`
             DELETE FROM routine_activities
-            WHERE "routineId" = ${id}
+            WHERE "routineId" = ${id};
+        `);
+
+        const {rows: [routine]} = await db.query(`
             DELETE FROM routines
             WHERE id = ${id};
-        `)
+        `);
 
         console.log('Routine deleted: ', routine);
         return routine;
@@ -437,4 +437,5 @@ module.exports={
     createRoutineActivity,
     getUserById,
     getRoutineById,
+    destroyRoutine,
 };

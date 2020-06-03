@@ -1,6 +1,6 @@
 const express = require('express');
 const routinesRouter = express.Router();
-const {getPublicRoutines, createRoutine, updateRoutine, getRoutineById} = require('../db');
+const {getPublicRoutines, createRoutine, updateRoutine, getRoutineById, destroyRoutine} = require('../db');
 const {requireUser} = require('./utils');
 
 routinesRouter.get('/', async (req, res, next) => {
@@ -40,7 +40,7 @@ routinesRouter.post('/', requireUser, async (req, res, next) => {
     }
 })
 
-//can't just pass in creatorId in the request like we're doing. creatorId would be the creator of routine with id of routinesId and then would be matched against the current logged in user. Any thoughts on best way to get the creatorId of this routine? Should this be done in the db methods or here?
+
 routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
     const {routinesId} = req.params;
     const {isPublic, name, goal} = req.body;
@@ -58,19 +58,21 @@ routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
         updateFields.goal = goal;
     }
 
-    console.log('Entered /routinesId PATCH, ID: ', routinesId,'To update: ', updateFields);
+    console.log('Entered /routinesId PATCH');
     
     try {
         const originalRoutine = await getRoutineById(routinesId)
-        console.log('got this far')
+        console.log('got past getRoutineById, Original Routine: ')
         console.log(originalRoutine);
         
         if (originalRoutine.author.id === req.user.id) {
             console.log("permission to edit routine granted");
-            const updatedRoutine = await updateRoutine(routinesId, updateFields);
+            const updatedRoutine = await updateRoutine(originalRoutine.id, updateFields);
+            console.log('Edited routine: ', updatedRoutine);
             res.send({
                 message: 'Routine updated',
-                data: updatedRoutine
+                data: updatedRoutine,
+                status: true,
             });
         } else {
             next({
@@ -82,6 +84,24 @@ routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
         } catch ({name, message}) {
             next({name, message});
         }
+});
+
+routinesRouter.delete('/:routineId', requireUser, async (req, res, next) => {
+    console.log('Entered  /routinesId DELETE');
+
+    const {routineId} = req.params;
+    console.log('routineId: ', routineId);
+
+    try {
+        const deleteRoutine = await destroyRoutine(routineId);
+        console.log('sending response');
+        res.send({
+            message: `routine deleted: ${deleteRoutine}`,
+            status: true,
+        })
+    } catch (error) {
+        throw error;
+    }
 })
 
 module.exports = routinesRouter;

@@ -8,14 +8,7 @@ SEAN: Users
     -routine_activities routes & functions
 
 BRIAN: Activities/ Routines
-    - functionality
-    -routes
-    -methods 
-    SATURDAY:
-    -Finish routines routes & functions
-    - correct creatorId issue & test PATCH path for routines - see juicebox
-    - Join routines & activities for all getRoutines functions
+    -clean up & update tests to log in user and create/update/delete sequentially
+    -test and fix update routine route/function if needed
 
 SLACK if stuck if needed!
-
-Small change here. 
