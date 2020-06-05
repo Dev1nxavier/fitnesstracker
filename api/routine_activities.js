@@ -69,8 +69,9 @@ routine_activitiesRouter.delete('/:routineActivityId', requireUser, async (req, 
     //TODO: IF ensure user id matches author id
 try {
     const {routineActivityId}= req.params;
-
+    console.log('RoutineActivityId for deletion: ', routineActivityId);
     const routineActivity = await getRoutineActivityById(routineActivityId);
+   
 
     if (routineActivity.creatorId === req.user.id){
         const deleteActivity = await destroyRoutineActivity(routineActivityId);

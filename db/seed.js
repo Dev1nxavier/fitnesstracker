@@ -167,5 +167,5 @@ startDB()
     db.end();
   });
 
-  module.exports= startDB
+  module.exports= { startDB }
     
