@@ -80,7 +80,7 @@ try {
         })
     }else(next({
         name: 'unauthorizedUserError',
-        message: 'Police have been called and are enroute'
+        message: 'Police have been called and are enroot'
     }))
     
 } catch (error) {

@@ -242,7 +242,7 @@ async function getPublicRoutinesByActivity(activityString) {
         SELECT * FROM routines 
         JOIN routine_activities ON routines.id=routine_activities."routineId"
         JOIN activities ON routine_activities."activityId"=activities.id
-        WHERE actitivies.name LIKE $1 AND routines.public=true;
+        WHERE activities.name LIKE $1 AND routines.public=true;
     `, [activityString]);
 
     console.log('Your routines with activity: ', activityString, ': ', routines);
