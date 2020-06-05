@@ -350,6 +350,22 @@ async function createRoutineActivity(routineId, activityId, count=4, duration=4)
     }
 }
 
+async function getRoutineActivityById(routineActivityId) {
+        console.log('Entered getRoutineActivityById')
+    try {
+        const { rows:[routineActivity] } = await db.query(`
+            SELECT * FROM routine_activities
+            JOIN routines ON "routineId" = routines.id
+            WHERE routine_activities.id=$1;
+        `, [routineActivityId]);
+
+        return routineActivity;
+        
+    } catch (error) {
+        throw error; 
+    }
+}
+
 
 async function addActivityToRoutine(routineId, activityList) {
 
@@ -410,4 +426,5 @@ module.exports={
     getUserById,
     getRoutineById,
     destroyRoutine,
+    getRoutineActivityById,
 };

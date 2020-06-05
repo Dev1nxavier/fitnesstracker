@@ -5,7 +5,7 @@ const routine_activitiesRouter = express.Router();
 const bodyParser = require('body-parser');
 routine_activitiesRouter.use(bodyParser.json());
 
-const { updateActivityToRoutine,destroyRoutineActivity, createRoutineActivity } = require('../db');
+const { updateActivityToRoutine,destroyRoutineActivity, createRoutineActivity, getRoutineActivityById } = require('../db');
 
 const { requireUser } = require('./utils');
 
@@ -48,11 +48,19 @@ try {
         fields.duration = duration;
     }
 
-    const routineActivity = await updateActivityToRoutine(routineId, fields)
+    //get original routine_activity
+    const routineActivity = await getRoutineActivityById(routineActivityId);
+    if (routineActivity.creatorId = req.user.id) {
+        console.log('User verified. Permission to edit');
 
-    res.send({
-        message: 'OK',
-    })
+        const routineActivity = await updateActivityToRoutine(routineId, fields)
+
+        res.send({
+            message: 'OK',
+            data: routineActivity
+        })
+    }
+
     } catch (error) {
         throw error;
     }
