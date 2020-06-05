@@ -107,6 +107,7 @@ describe('Test all routers', ()=>{
     })
 
     describe('routine_activities Router', ()=>{
+
         it('creates a new routineActivity', async()=>{
 
             const data = {routineId: 2, activityId: 8, count: 20, duration: 300};
@@ -122,17 +123,16 @@ describe('Test all routers', ()=>{
             expect(res.data.status).toEqual('OK');
         })
 
+        //might need to rethink this one. By going to routine_activity 2 in the table, aren't we already deciding which routine and activity we would be modifying? if modifying routine_activities/2 we would be modifying routineId: 2 and activityId: 6, routineId: 2's creator is 2 and we're logged in as 5?
         it('updates a routine activity', async ()=>{
 
             console.log('TEST PATCH ROUTINE ACTIVITIES');
             const data = {
-                routineId: 1,
-                activityId: 1,
                 duration: Math.floor(Math.random() * 11),
                 count: Math.floor(Math.random() * 11)
             }
     
-            const res = await axios.patch(`http://localhost:3000/api/routine_activities/2`,data,
+            const res = await axios.patch(`http://localhost:3000/api/routine_activities/4`,data,
                 {
                     headers: {'Authorization': `Bearer ${token}`},
                 }
@@ -152,7 +152,7 @@ describe('Test all routers', ()=>{
                 routineActivityId: routineActivity.id,
             }
     
-            const res = await axios.delete(`http://localhost:3000/api/routine_activities/${routineActivityId}`,
+            const res = await axios.delete(`http://localhost:3000/api/routine_activities/${4}`,
                 {
                     headers: {'Authorization': `Bearer ${token}`},
                     data

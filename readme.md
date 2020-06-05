@@ -12,3 +12,7 @@ BRIAN: Activities/ Routines
     -test and fix update routine route/function if needed
 
 SLACK if stuck if needed!
+
+Description: this does these things
+
+Getting started: npm install... npm run start:dev... npm run test:watch... etc.

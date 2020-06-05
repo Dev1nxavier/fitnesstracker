@@ -34,7 +34,7 @@ routine_activitiesRouter.patch('/:routineActivityId', requireUser, async (req, r
 
 
     const { routineActivityId } = req.params;
-    const { routineId, count, duration } = req.body;
+    const { count, duration } = req.body;
 try {
     let fields = {};
 
@@ -46,12 +46,16 @@ try {
         fields.duration = duration;
     }
 
+    console.log('entered routineActivity PATCH')
+
     //get original routine_activity
-    const routineActivity = await getRoutineActivityById(routineActivityId);
-    if (routineActivity.creatorId === req.user.id) {
+    const {creatorId} = await getRoutineActivityById(routineActivityId);
+    console.log('/PATCH routineActivityId: ', routineActivityId);
+    console.log('creatorId: ', creatorId, 'userId: ', req.user.id);
+    if (creatorId === req.user.id) {
         console.log('User verified. Permission to edit');
 
-        const routineActivity = await updateActivityToRoutine(routineId, fields)
+        const routineActivity = await updateActivityToRoutine(routineActivityId, fields)
 
         res.send({
             message: 'OK',
@@ -81,7 +85,7 @@ try {
         })
     }else(next({
         name: 'unauthorizedUserError',
-        message: 'Police have been called and are enroot'
+        message: 'Police have been called and are en route'
     }))
     
 } catch (error) {

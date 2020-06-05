@@ -160,12 +160,12 @@ async function startDB() {
   }
 }
 
-startDB()
-  .catch(console.error)
-  .finally(() => {
-    console.log("closing db connection.");
-    db.end();
-  });
+// startDB()
+//   .catch(console.error)
+//   .finally(() => {
+//     console.log("closing db connection.");
+//     db.end();
+//   });
 
   module.exports= { startDB }
     

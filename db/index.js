@@ -358,13 +358,16 @@ async function createRoutineActivity(routineId, activityId, count=4, duration=4)
 }
 
 async function getRoutineActivityById(routineActivityId) {
+    const activityIdNum = Number(routineActivityId);
         console.log('Entered getRoutineActivityById')
+        console.log('/db routineActivityID: ', activityIdNum)
     try {
-        const { rows: routineActivity } = await db.query(`
+
+        const { rows: [routineActivity] } = await db.query(`
             SELECT * FROM routine_activities
             JOIN routines ON "routineId" = routines.id
             WHERE routine_activities.id=$1;
-        `, [routineActivityId]);
+        `, [activityIdNum]);
 
         console.log('Exiting getRoutineActivityById successfully. Retrieved Routine: ', routineActivity);
         return routineActivity;
