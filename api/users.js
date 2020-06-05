@@ -25,15 +25,11 @@ usersRouter.post('/register', async (req, resp, next)=>{
 
     try {
         const { username, password } = req.body;
-    console.log('reached /users/register with username: ', username);
 
     const user = bcrypt.hash(password, SALT_COUNT, async(error, hashedPassword)=>{//'const user =' not being used? can't this be removed? test still works
-
-    console.log('username: ', username, 'hashedpassword: ', hashedPassword);
     
     const user = await createUser({username, password: hashedPassword});
 
-    console.log('From register, user is now: ', user)
     resp.send({message: 'new user created', user:user })
     } );
     
@@ -49,7 +45,6 @@ usersRouter.post('/login', async (req, res, next)=>{
 
     const { username, password } = req.body;
     
-    console.log('Entered /login with username: ', username);
     
     if (!username || !password) {
         next({
@@ -68,10 +63,8 @@ usersRouter.post('/login', async (req, res, next)=>{
           if (passwordMatch) {
             const id = user.id;
             
-            console.log('successfully matched password! id: ', id);
             const token = jwt.sign({id: id, username}, `${JWT_SECRET}`);  
 
-            console.log('Token: ', token);
             res.send({message: 'SUCCESS', token});
 
         }else{

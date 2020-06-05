@@ -11,15 +11,13 @@ const { requireUser } = require('./utils');
 
 
 routine_activitiesRouter.get('/', async(req, res, next)=>{
-    console.log('Reached /routine_activities route');
+
     res.send({message: 'successfully reached /routine_activities route',
     data: 'OK'});
-    console.log('Moving on to next route');
     next();
 })
 
 routine_activitiesRouter.post('/', requireUser, async (req, res, next)=>{
-    console.log('Reached POST /routine_activities route');
     const {routineId, activityId, count, duration} = req.body;
 
     const newActivity = await createRoutineActivity(routineId, activityId, count, duration);
@@ -36,12 +34,9 @@ routine_activitiesRouter.patch('/:routineActivityId', requireUser, async (req, r
 
     //TODO: IF statement to ensure UserId= activity Author ID
     
-    console.log('Reached PATCH /routine_activities:activity');
 
     const { routineActivityId } = req.params;
-    console.log(req.params);
     const { routineId, count, duration } = req.body;
-    console.log(req.body);
 try {
     let fields = {};
 
@@ -66,16 +61,13 @@ try {
 
 routine_activitiesRouter.delete('/:routineActivityId', requireUser, async (req, res, next)=>{
     //TODO: IF ensure user id matches author id
-    console.log('reached DELETE /:routine_activitiesId route');
 try {
     const {routineActivityId}= req.params;
-    console.log('routineActivityId: ', req.params)
     // console.log(req.headers)
 
     // const { userId } = req.body
 
     const deleteActivity = await destroyRoutineActivity(routineActivityId);
-    console.log('sending response');
     res.send({
         message: `activity deleted: ${deleteActivity}`,
         status: true,

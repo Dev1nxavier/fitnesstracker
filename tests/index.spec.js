@@ -6,10 +6,11 @@
 const axios = require('axios');
 const faker = require('faker');
 const { getUserByUsername, createActivity } = require('../db'); 
-// const { startDB } = require('../db/seed'); 
+
 
 let user;
 let token;
+let routine;
 
 describe('Booleans', ()=>{
     it('is a test of the tests', async ()=>{
@@ -157,7 +158,9 @@ describe('UserRouter', ()=>{
             }
         );
 
-        expect(res.data.length!==0).toEqual(true);
+        routine = res.data.routine;
+
+        expect(res.data.status).toEqual('OK');
     });
 
     it('sends get request to routine_activities route', async ()=>{
@@ -190,9 +193,9 @@ describe('UserRouter', ()=>{
 
     it('updates a routine', async () => {
         const data = {
-            isPublic: true,
-            name: "Sean's Jazzersizer",
-            goal: "Let's sweat to the Oldies!"
+            public: true,
+            name: 'Seans Jazzersizer',
+            goal: 'Lets sweat to the Oldies!'
         }
 
         const res = await axios.patch(`http://localhost:3000/api/routines/${3}`, data,

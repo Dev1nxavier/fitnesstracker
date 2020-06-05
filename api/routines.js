@@ -30,10 +30,12 @@ routinesRouter.post('/', requireUser, async (req, res, next) => {
             name,
             goal,
         })
+        console.log('New routine created: ',routine);
 
-        req.send({
+        res.send({
             message: 'new routine created',
             routine: routine,
+            status: 'OK'
         })
     } catch (error) {
         next(error);
@@ -43,11 +45,11 @@ routinesRouter.post('/', requireUser, async (req, res, next) => {
 
 routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
     const {routinesId} = req.params;
-    const {isPublic, name, goal} = req.body;
+    const {public, name, goal} = req.body;
     const updateFields = {};
 
-    if(isPublic){
-        updateFields.isPublic = isPublic;
+    if(public){
+        updateFields.public = public;
     }
 
     if (name) {
@@ -58,7 +60,7 @@ routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
         updateFields.goal = goal;
     }
 
-    console.log('Entered /routinesId PATCH');
+    console.log('Entered /routinesId PATCH. RoutineId: ', routinesId);
     
     try {
         const originalRoutine = await getRoutineById(routinesId)

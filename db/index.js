@@ -12,8 +12,6 @@ async function createUser({username, password}){
         RETURNING *;
         `, [username, password]);
         
-        console.log('user: ', username, 'password: ', password);
-
         return user; 
     } catch (error) {
 
@@ -24,10 +22,7 @@ async function createUser({username, password}){
 
 async function getUserByUsername(username) {
 
-    console.log('retrieving user info by username: ', username);
-
     try {
-        console.log('querying users db for user...');
 
     const { rows: [user] } = await db.query(`
       SELECT *
@@ -35,9 +30,7 @@ async function getUserByUsername(username) {
       WHERE username=$1
     `, [username]);
     
-    console.log('users db queried!');
 
-    console.log('username: ', user.username, 'password: ', user.password);
 
     return user;
 
@@ -48,7 +41,6 @@ async function getUserByUsername(username) {
 }
 
 async function getUserById(Id) {
-    console.log('entered getUserById');
 
     try {
         const {rows: [user]} = await db.query(`
@@ -56,7 +48,6 @@ async function getUserById(Id) {
             FROM users
             WHERE id = $1;
         `, [Id]);
-        console.log('retrieved user: ', user);
 
         return user;
     } catch (error) {
@@ -152,11 +143,11 @@ async function updateRoutine(routinesId, fields ={}) {
     try {
         console.log('trying to update routine...');
 
-        const {rows: [routine]} = await db.query(`
-        UPDATE routines
-        SET ${setString}
-        WHERE "id" = ${routinesId}
-        RETURNING *;
+        const { rows: [routine] } =await db.query(`
+            UPDATE routines
+            SET ${ setString }
+            WHERE id=${ routinesId}
+            RETURNING *;
         `, queryString);
         
         console.log('Routine updated: ', routine);
@@ -168,7 +159,6 @@ async function updateRoutine(routinesId, fields ={}) {
 }
 
 async function getAllRoutines() {
-    console.log("Entering get all routines");
 
     try {
         const {rows: routineIds} = await db.query(`
@@ -180,7 +170,6 @@ async function getAllRoutines() {
             routineIds.map((routine) => getRoutineById(routine.id))
         );
 
-        console.log('Your routines: ', routines);
         return routines;
     } catch (error) {
         throw error;
@@ -188,7 +177,6 @@ async function getAllRoutines() {
 }
 
 async function getPublicRoutines() {
-    console.log("Entering get public routines");
     try {
         const {rows: routineIds} = await db.query(`
             SELECT id
@@ -200,7 +188,6 @@ async function getPublicRoutines() {
             routineIds.map((routine) => getRoutineById(routine.id))
         );
 
-        console.log('Your public routines: ', routines);
         return routines;
     } catch (error) {
         throw error;
@@ -223,7 +210,6 @@ async function getAllRoutinesByUser({username}) {
             routineIds.map((routine) => getRoutineById(routine.id))
         );
 
-        console.log("your routines by User: ", routines);
         return routines;
     } catch (error) {
         throw error;
@@ -231,9 +217,7 @@ async function getAllRoutinesByUser({username}) {
 }
 
 async function getPublicRoutinesByUser({username}) {
-    console.log("Entering getPublicRoutinesByUser")
     const {id} = getUserByUsername(username);
-    console.log('User ID: ', id);
 
     try {
         const {rows: routineIds} = await db.query(`
@@ -246,7 +230,6 @@ async function getPublicRoutinesByUser({username}) {
             routineIds.map((routine) => getRoutineById(routine.id))
         );
 
-        console.log("your public routines by User: ", routines);
         return routines;
     } catch (error) {
         throw error;
@@ -336,7 +319,6 @@ function setStringFunction(fields) {
     const setString = Object.keys(fields).map((key, index)=>{
        return  `"${key}" = $${index+1}`}).join(', ');
 
-    console.log('stringFields: ',setString);
 
     if (setString.length === 0) {
         return; 
@@ -351,8 +333,6 @@ function setStringFunction(fields) {
 
 async function createRoutineActivity(routineId, activityId, count=4, duration=4) {
 
-    console.log('Entered createRoutineActivity');
-
     try {
         
         const { rows }= await db.query(`
@@ -362,7 +342,6 @@ async function createRoutineActivity(routineId, activityId, count=4, duration=4)
             returning *;
         `, [routineId, activityId, count, duration]);
 
-        console.log("Exiting createRoutineActivity successfully");
 
         return rows;
 
@@ -374,7 +353,6 @@ async function createRoutineActivity(routineId, activityId, count=4, duration=4)
 
 async function addActivityToRoutine(routineId, activityList) {
 
-    console.log('entered addActivityToRoutine', activityList);
     try {
         const createRoutineActivityPromises = activityList.map(async activity=>{
 
@@ -382,7 +360,6 @@ async function addActivityToRoutine(routineId, activityList) {
         });
 
        const promise = await Promise.all(createRoutineActivityPromises);
-        console.log('Promises Promises... ',promise);
 
         return await getRoutineById(routineId); 
 
@@ -394,13 +371,9 @@ async function addActivityToRoutine(routineId, activityList) {
 }
 
 async function updateActivityToRoutine(id, fields={}) {
-    console.log('Entered updateRoutineActivity');
     const { setString, queryString } = setStringFunction(fields);
 
-    console.log(setString);
-    console.log(queryString);
     try {
-        console.log('Updating routine activity...');
 
         const { rows: [routineActivity] } = await db.query(`
         UPDATE routine_activities
@@ -409,7 +382,6 @@ async function updateActivityToRoutine(id, fields={}) {
         RETURNING *;
     `,queryString);
 
-        console.log('routine activity updated!', routineActivity);
 
         return routineActivity;
         
