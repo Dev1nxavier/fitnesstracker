@@ -236,13 +236,20 @@ async function getPublicRoutinesByUser({username}) {
     }
 }
 
-// getPublicRoutinesByActivity
-// select and return an array of public routines which have a specific activityId in their routine_activities join, include their activities
-//important point: must include the activities associated with the routine.
-//pending routine_activities
-// async function getPublicRoutinesByActivity({ activityId }) {
 
-// }
+async function getPublicRoutinesByActivity(activityString) {
+    const {rows: [routines]} = await db.query(`
+        SELECT * FROM routines 
+        JOIN routine_activities ON routines.id=routine_activities."routineId"
+        JOIN activities ON routine_activities."activityId"=activities.id
+        WHERE actitivies.name LIKE $1 AND routines.public=true;
+    `, [activityString]);
+
+    console.log('Your routines with activity: ', activityString, ': ', routines);
+
+    return routines; 
+}
+
 
 async function getRoutineById(routineId) {
     try {
@@ -295,7 +302,7 @@ async function destroyRoutine(id) {
     console.log('Entered destroyRoutine');
 
     try {
-        //Is this valid and/or is there a better way to do this?
+        
         const {rows: [activity]} = await db.query(`
             DELETE FROM routine_activities
             WHERE "routineId" = ${id};
@@ -427,4 +434,5 @@ module.exports={
     getRoutineById,
     destroyRoutine,
     getRoutineActivityById,
+    getPublicRoutinesByActivity,
 };

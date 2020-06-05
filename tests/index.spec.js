@@ -207,6 +207,25 @@ describe('UserRouter', ()=>{
         expect(res.data.status).toEqual(true);
     })
 
+    it('attaches a new activity to a routine', async()=>{
+
+        data={
+            activityId: 7,
+            count: 200,
+            duration: 10
+        };
+
+        const res= await axios.post(`http://localhost:3000/api/routines/1/activities`, data, {
+
+            headers: {'Authorization': `Bearer ${token}`}
+
+        })
+
+        expect(res.data.status).toEqual(true);
+
+
+    })
+
     it('permanently deletes a routine and its activities', async () => {
         const res = await axios.delete(`http://localhost:3000/api/routines/2`,
         {

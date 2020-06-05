@@ -1,6 +1,6 @@
 const express = require('express');
 const routinesRouter = express.Router();
-const {getPublicRoutines, createRoutine, updateRoutine, getRoutineById, destroyRoutine} = require('../db');
+const {getPublicRoutines, createRoutine, updateRoutine, getRoutineById, destroyRoutine, createRoutineActivity} = require('../db');
 const {requireUser} = require('./utils');
 
 routinesRouter.get('/', async (req, res, next) => {
@@ -88,6 +88,28 @@ routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
         }
 });
 
+routinesRouter.post('/:routineId/activities', async(req, res, next)=>{
+    console.log('Entered POST /:routinesId/activities route');
+    const {routineId} = req.params;
+    
+
+    const {activityId, count, duration} = req.body;
+
+    try {
+        const newActivity = await createRoutineActivity(routineId, activityId, count, duration);
+
+        res.send({
+            message: 'added new activity to routine',
+            data: newActivity,
+            status: true
+        })
+
+
+    } catch (error) {
+        throw error;
+    }
+})
+
 routinesRouter.delete('/:routineId', requireUser, async (req, res, next) => {
     console.log('Entered  /routinesId DELETE');
 
@@ -105,5 +127,7 @@ routinesRouter.delete('/:routineId', requireUser, async (req, res, next) => {
         throw error;
     }
 })
+
+
 
 module.exports = routinesRouter;

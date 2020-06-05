@@ -32,7 +32,7 @@ routine_activitiesRouter.post('/', requireUser, async (req, res, next)=>{
 
 routine_activitiesRouter.patch('/:routineActivityId', requireUser, async (req, res, next)=>{
 
-    //TODO: IF statement to ensure UserId= activity Author ID
+
     
 
     const { routineActivityId } = req.params;
