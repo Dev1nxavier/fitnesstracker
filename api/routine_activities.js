@@ -33,8 +33,6 @@ routine_activitiesRouter.post('/', requireUser, async (req, res, next)=>{
 routine_activitiesRouter.patch('/:routineActivityId', requireUser, async (req, res, next)=>{
 
 
-    
-
     const { routineActivityId } = req.params;
     const { routineId, count, duration } = req.body;
 try {
@@ -50,7 +48,7 @@ try {
 
     //get original routine_activity
     const routineActivity = await getRoutineActivityById(routineActivityId);
-    if (routineActivity.creatorId = req.user.id) {
+    if (routineActivity.creatorId === req.user.id) {
         console.log('User verified. Permission to edit');
 
         const routineActivity = await updateActivityToRoutine(routineId, fields)
@@ -71,15 +69,20 @@ routine_activitiesRouter.delete('/:routineActivityId', requireUser, async (req, 
     //TODO: IF ensure user id matches author id
 try {
     const {routineActivityId}= req.params;
-    // console.log(req.headers)
 
-    // const { userId } = req.body
+    const routineActivity = await getRoutineActivityById(routineActivityId);
 
-    const deleteActivity = await destroyRoutineActivity(routineActivityId);
-    res.send({
-        message: `activity deleted: ${deleteActivity}`,
-        status: true,
-    })
+    if (routineActivity.creatorId === req.user.id){
+        const deleteActivity = await destroyRoutineActivity(routineActivityId);
+        res.send({
+            message: `activity deleted: ${deleteActivity}`,
+            status: true,
+        })
+    }else(next({
+        name: 'unauthorizedUserError',
+        message: 'Police have been called and are enroute'
+    }))
+    
 } catch (error) {
     throw error;
 }

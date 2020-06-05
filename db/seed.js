@@ -155,6 +155,8 @@ async function startDB() {
   } catch (error) {  
     console.log("Error during startDB")
     throw error;
+  }finally{
+      db.end();
   }
 }
 
@@ -164,4 +166,6 @@ startDB()
     console.log("closing db connection.");
     db.end();
   });
+
+  module.exports= startDB
     

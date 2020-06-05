@@ -116,13 +116,24 @@ routinesRouter.delete('/:routineId', requireUser, async (req, res, next) => {
     const {routineId} = req.params;
     console.log('routineId: ', routineId);
 
+    const originalRoutine = await getRoutineById(routineId);
+
+
+
     try {
-        const deleteRoutine = await destroyRoutine(routineId);
-        console.log('sending response');
-        res.send({
-            message: `routine deleted: ${deleteRoutine}`,
-            status: true,
-        })
+
+        if (originalRoutine.author.id === req.user.id) {
+            const deleteRoutine = await destroyRoutine(routineId);
+            console.log('sending response');
+            res.send({
+                message: `routine deleted: ${deleteRoutine}`,
+                status: true,
+            })
+        }else(next({
+            name: 'routineDeleteError',
+            message: 'Error deleting routine. Guess your gonna have to do another set'
+        }))
+      
     } catch (error) {
         throw error;
     }

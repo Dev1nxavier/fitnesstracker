@@ -124,10 +124,10 @@ describe('UserRouter', ()=>{
         // }
 
         const data = {
-            routineActivityId: 1
+            routineActivityId: 8
         }
 
-        const res = await axios.delete(`http://localhost:3000/api/routine_activities/1`,
+        const res = await axios.delete(`http://localhost:3000/api/routine_activities/8`,
             {
                 headers: {'Authorization': `Bearer ${token}`},
                 data
@@ -227,7 +227,7 @@ describe('UserRouter', ()=>{
     })
 
     it('permanently deletes a routine and its activities', async () => {
-        const res = await axios.delete(`http://localhost:3000/api/routines/2`,
+        const res = await axios.delete(`http://localhost:3000/api/routines/3`,
         {
             headers: {'Authorization': `Bearer ${token}`},
         });
