@@ -184,10 +184,11 @@ async function getPublicRoutines() {
             WHERE public =true;
         `);
 
+        console.log('Entered getPublicRoutines.routineIds:',routineIds);
         const routines = await Promise.all(
             routineIds.map((routine) => getRoutineById(routine.id))
         );
-
+        
         return routines;
     } catch (error) {
         throw error;
@@ -261,7 +262,7 @@ async function getRoutineById(routineId) {
 
         //CHECK FUNCTION: SELECT * OR SELECT activities.* ??
         const { rows: [activities] } = await db.query(`
-            SELECT *
+            SELECT activities.*
             FROM activities
             JOIN routine_activities ON activities.id=routine_activities."routineId"
             WHERE routine_activities."routineId"=$1;
@@ -418,6 +419,20 @@ async function updateActivityToRoutine(id, fields={}) {
     
 }
 
+async function getRoutineByUsername(username) {
+    console.log('Entered getRoutineByUsername db with username:', username);
+
+    const { rows:[routines] } = await db.query(`
+        SELECT * FROM routines
+        JOIN users ON routines."creatorId"=users.id
+        WHERE users.username=$1;
+    `,[username]);
+
+    console.log('Successfully retrieved routines:', routines);
+
+    return routines;
+}
+
 module.exports={
     db,
     createUser,
@@ -439,4 +454,7 @@ module.exports={
     destroyRoutine,
     getRoutineActivityById,
     getPublicRoutinesByActivity,
+    getRoutineByUsername,
+    getAllRoutinesByUser,
+
 };

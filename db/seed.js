@@ -73,13 +73,13 @@ async function initializeUsers() {
     try {
         console.log('starting to create users...');
 
-        const fakeTwo = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+        const fakeTwo = await createUser({username: 'user1', password: faker.internet.password()});
 
-        const fakeThree = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+        const fakeThree = await createUser({username: 'user2', password: faker.internet.password()});
 
-        const fakeFour = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+        const fakeFour = await createUser({username: 'user4', password: faker.internet.password()});
 
-        const fakeFive = await createUser({username: faker.internet.userName(), password: faker.internet.password()});
+        const fakeFive = await createUser({username: 'user3', password: faker.internet.password()});
 
         
     } catch (error) {
@@ -91,10 +91,10 @@ async function initializeActivities() {
     try {
         console.log('starting to create activities...');
 
-        const fakeOne = await createActivity({name: faker.company.bsBuzz(), description: faker.company.bs()});
-        const fakeTwo = await createActivity({name: faker.company.bsBuzz(), description: faker.company.bs()});
-        const fakeThree = await createActivity({name: faker.company.bsBuzz(), description: faker.company.bs()});
-        const fakeFour = await createActivity({name: faker.company.bsBuzz(), description: faker.company.bs()});
+        for (let index = 0; index < 5; index++) {
+            const activity = await createActivity({name: faker.company.bsBuzz(), description: faker.company.bs()});
+            
+        }
         
     } catch(error) {
         throw error; 
@@ -105,13 +105,20 @@ async function initializeRoutines() {
     try {
         console.log('starting to create routines...');
 
-        const fakeOne = await createRoutine({creatorId: 1, isPublic: true, name: faker.hacker.noun(), goal: faker.hacker.phrase()});
-        const fakeTwo = await createRoutine({creatorId: 2, isPublic: false, name: faker.hacker.noun(), goal: faker.hacker.phrase()});
+        for (let index = 0; index < 10; index++) {
+
+            const routine = await createRoutine({creatorId: 1, isPublic: true, name: `${faker.hacker.noun()}${index+1}`, goal: faker.hacker.phrase()});
+            
+            console.log('Routine Created:', routine);
+            addActivityToRoutine(routine.id, getAllActivities);
+        }
 
     } catch (error) {
         throw error;
     }
 }
+
+
 
 
 async function testDb() {
@@ -135,8 +142,6 @@ async function testDb() {
 
     const activityList = [activityOne, activityTwo, activityThree];
 
-    // console.log('Create one routineActivity');
-    // const routineActivity = await createRoutineActivity(1,1,100, 50);
     const newActivity = addActivityToRoutine(routinesList[1].id, activityList);
 
     return newActivity;
@@ -160,12 +165,12 @@ async function startDB() {
   }
 }
 
-// startDB()
-//   .catch(console.error)
-//   .finally(() => {
-//     console.log("closing db connection.");
-//     db.end();
-//   });
+startDB()
+  .catch(console.error)
+  .finally(() => {
+    console.log("closing db connection.");
+    db.end();
+  });
 
   module.exports= { startDB }
     
