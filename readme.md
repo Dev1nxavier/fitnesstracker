@@ -13,8 +13,19 @@ BRIAN: Activities/ Routines
 
 SLACK if stuck if needed!
 
-Description: this does these things
+Preston suggestion:
+    Description: this does these things
 
-Getting started: npm install... npm run start:dev... npm run test:watch... etc.
+    Getting started: npm install... npm run start:dev... npm run test:watch... etc.
 
-BRIAN: THE REST
+BRIAN: 
+    - Fix getRoutinesByUser? search function = getRoutinesByUsername
+    - Need ability to click card and have it display all activities. Make tabs
+
+SEAN:
+    - Finish rest of search keywords
+    - Create new activities button
+
+SOMEONE:
+    - Create .env
+    - restructure /db create DB adapter ie. require all in index.js and create client.js, users.js, routines.js etc.

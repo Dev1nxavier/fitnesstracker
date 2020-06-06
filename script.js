@@ -182,6 +182,8 @@ async function displayRoutines(routines) {
         routinesDiv.append(renderRoutineCard(routine));
     });
 
+    console.log('routines Div: ', routinesDiv);
+
     app.append(routinesDiv);
 }
 
@@ -290,6 +292,7 @@ async function getUserRoutines(username) {
                 const routinesArray = new Array();
                 routinesArray.push(data.routines);
                 displayRoutines(routinesArray);
+                console.log('data.routines: ', data.routines, 'routinesArray: ', routinesArray);
             })
     } catch (error) {
         
@@ -303,6 +306,8 @@ $('.search-button').on('click', (e)=>{
     const keywords = $('#keywords').val();
 
     const routinesSearch = getUserRoutines(keywords);
+
+    console.log('your routines: ', routinesSearch)
   
     
 })

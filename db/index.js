@@ -163,7 +163,7 @@ async function getAllRoutines() {
     try {
         const {rows: routineIds} = await db.query(`
             SELECT id
-            FROM routines
+            FROM routines;
         `);
 
         const routines = await Promise.all(
@@ -261,7 +261,7 @@ async function getRoutineById(routineId) {
         `, [routineId]);
 
         //CHECK FUNCTION: SELECT * OR SELECT activities.* ??
-        const { rows: [activities] } = await db.query(`
+        const { rows: activities } = await db.query(`
             SELECT activities.*
             FROM activities
             JOIN routine_activities ON activities.id=routine_activities."routineId"
