@@ -4,9 +4,9 @@ const {requireUser} = require('./utils');
 const activitiesRouter = express.Router();
 
 
-activitiesRouter.get('/', async(req, res, next)=>{
-    res.send({message: 'entered /activities successfully'});
-})
+// activitiesRouter.get('/', async(req, res, next)=>{
+//     res.send({message: 'entered /activities successfully'});
+// })
 
 const bodyParser = require('body-parser');
 activitiesRouter.use(bodyParser.json());

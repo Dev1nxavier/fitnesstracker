@@ -23,7 +23,7 @@ routine_activitiesRouter.post('/', requireUser, async (req, res, next)=>{
     const {routineId, activityId, count, duration} = req.body;
     console.log('Do we get this far?');
     const newActivity = await createRoutineActivity(routineId, activityId, count, duration);
-
+    console.log('Do we get AGAIN THIS FAR?');
     res.send({
         message: 'Activity added to routine',
         data: newActivity,

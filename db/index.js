@@ -426,7 +426,7 @@ async function getRoutineByUsername(username) {
     const { rows:[routines] } = await db.query(`
         SELECT * FROM routines
         JOIN users ON routines."creatorId"=users.id
-        WHERE users.username='$1';
+        WHERE users.username=$1;
     `,[username]);
 
     console.log('Successfully retrieved routines:', routines);

@@ -7,8 +7,10 @@ let STATE={
     sessionToken: '',
     login: false,
     Publicroutines:[],
-
+    activities:[]
 }
+
+let routineId;
 
 const BASE_URL = 'http://localhost:3000/api'
 
@@ -152,6 +154,22 @@ console.log('Entered getPublicRoutines');
             STATE.Publicroutines=data.data;
             displayRoutines(data.data);
         })
+   
+}
+
+async function getAllActivitiesArray() {
+    const params = {
+        method:"GET",
+        headers:{'Content-Type': 'application/json'}
+    };
+
+    fetch(`${BASE_URL}/activities`, params)
+        .then(res=>res.json())
+        .then(data=>{
+            console.log('All Activities from getAllActivitiesArray: ', data.activities);
+            STATE.activities = data.activities; 
+            renderActivities(data.activities);
+        })
 }
 
 async function displayRoutines(routines) {
@@ -187,12 +205,48 @@ function renderRoutineCard(routine) {
     return card;
 }
 
+
+function renderActivities(activities) {
+    console.log(Array.isArray(activities), 'OR IS THIS AN OBJECT?', typeof activities);
+
+    const divContainer =$(`<div class="card-group"></div>`);
+
+    activities.map(activity=>{
+
+        const { name, description} = activity;
+
+        const list = $(`
+            <a href="#" class="card-group-item list-group-item-action activity_list_item">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">${name}</h5>
+                </div>
+                <p class="mb-1">${description}</p>
+            </a>`)
+
+            list.data('activity', activity);
+            divContainer.append(list);
+    })
+     
+    $('.activities_container').append(divContainer);
+
+
+}
+
 $('#app').on('click', '.add-activity', async function(event){
     console.log('Clicked add activity');
     event.preventDefault();
     const routine = $(this).closest('.card').data('routine');
     console.log('Card routine:', routine);
-    await addActivityToCurrentRoutine(routine.id, 1);
+    routineId = routine.id;
+    // await addActivityToCurrentRoutine(routine.id, 1);
+    $('.activities_drawer').css('width', "600");
+})
+
+$('.activities_drawer').on('click', '.activity_list_item',async function(){
+    const activityId = $(this).data('activity').id;
+    console.log('Your chosen activity: ', activityId);
+
+    await addActivityToCurrentRoutine(routineId, activityId);
 
 })
 
@@ -219,12 +273,12 @@ async function addActivityToCurrentRoutine(routineId, activityId) {
 }
 
 async function getUserRoutines(username) {
-    console.log('Entered getUserRoutines');
+    console.log('Entered getUserRoutines with username:', username);
     const params = {
         method: "POST",
         headers:{'Content-Type': 'application/json'},
         body:JSON.stringify({
-            username
+            username: username
         })
     };
     try {
@@ -253,4 +307,17 @@ $('.search-button').on('click', (e)=>{
     
 })
     
-$(document).ready(refreshState());
+$('.closebtn').on('click', function(){
+    console.log('SLider button clicked');
+
+    $('.activities_drawer').css('width', "0");
+
+
+
+
+})
+
+$(document).ready(
+    refreshState(),
+    getAllActivitiesArray(),
+    );
