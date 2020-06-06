@@ -14,11 +14,10 @@ let routineId;
 
 const BASE_URL = 'http://localhost:3000/api'
 
-async function refreshState() {
+async function renderState() {
     const app=$('#app');
 
         if (!STATE.login) {
-        
         
          const form= $(`
         <div class="jumbotron" id="login-register-jumbo"> 
@@ -67,6 +66,11 @@ async function refreshState() {
         }
 }
 
+async function initializePage() {
+   const allPublicRoutines = await getPublicRoutines();
+
+}
+
 
 $('#app').on('click','#register_button',function(){
     event.preventDefault();
@@ -95,7 +99,7 @@ $('#app').on('click','#register_button',function(){
         STATE.hashpassword = data.user.password;
         login(STATE.username, STATE.password)
     })
-    .then(getPublicRoutines())
+    // .then(getPublicRoutines())
 
 })
 
@@ -133,7 +137,7 @@ async function login(username, password) {
             STATE.login = true; 
             alert('Login successful');
         })
-        .then(getPublicRoutines)
+        // .then(getPublicRoutines)
     } catch (error) {
         throw error;
     }
@@ -150,9 +154,11 @@ console.log('Entered getPublicRoutines');
     fetch(`${BASE_URL}/routines`,params)
         .then(res=>res.json())
         .then(data=>{
-            console.log('Your routines:',data);
-            STATE.Publicroutines=data.data;
-            displayRoutines(data.data);
+            const { data:publicRoutines } = data;
+            console.log('Your routines:',publicRoutines);
+            STATE.Publicroutines=publicRoutines;
+            // displayRoutines(data.data);
+            
         })
    
 }
@@ -166,9 +172,10 @@ async function getAllActivitiesArray() {
     fetch(`${BASE_URL}/activities`, params)
         .then(res=>res.json())
         .then(data=>{
-            console.log('All Activities from getAllActivitiesArray: ', data.activities);
-            STATE.activities = data.activities; 
-            renderActivities(data.activities);
+            const {activities} = data;
+            console.log('All Activities from getAllActivitiesArray: ',activities);
+            STATE.activities = activities; 
+            // renderActivities(data.activities);
         })
 }
 
@@ -323,6 +330,6 @@ $('.closebtn').on('click', function(){
 })
 
 $(document).ready(
-    refreshState(),
+    renderState(),
     getAllActivitiesArray(),
     );
