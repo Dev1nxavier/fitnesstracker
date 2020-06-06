@@ -340,7 +340,7 @@ function setStringFunction(fields) {
 
 
 async function createRoutineActivity(routineId, activityId, count=4, duration=4) {
-
+        console.log('Entered createRoutineActivity in db. Params: ', routineId, activityId, count, duration );
     try {
         
         const { rows }= await db.query(`
@@ -350,6 +350,7 @@ async function createRoutineActivity(routineId, activityId, count=4, duration=4)
             returning *;
         `, [routineId, activityId, count, duration]);
 
+        console.log('Exiting CreateRoutineActivity successfully: ', rows);
 
         return rows;
 
@@ -425,7 +426,7 @@ async function getRoutineByUsername(username) {
     const { rows:[routines] } = await db.query(`
         SELECT * FROM routines
         JOIN users ON routines."creatorId"=users.id
-        WHERE users.username=$1;
+        WHERE users.username='$1';
     `,[username]);
 
     console.log('Successfully retrieved routines:', routines);

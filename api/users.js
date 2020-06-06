@@ -45,6 +45,7 @@ usersRouter.post('/register', async (req, resp, next)=>{
 
 usersRouter.post('/login', async (req, res, next)=>{
 
+    console.log('Entered POST /login');
     const { username, password } = req.body;
     
     
@@ -56,17 +57,18 @@ usersRouter.post('/login', async (req, res, next)=>{
     }
 
     try{
-
+        console.log('Entering try block');
     const user = await getUserByUsername(username);
+    console.log('Username:', username, 'User:', user);
 
     const hashedPassword = user.password;
-
+        console.log('Password:', user.password, 'Hashed: ', hashedPassword);
     const login = bcrypt.compare(password, hashedPassword, (error, passwordMatch)=>{
           if (passwordMatch) {
             const id = user.id;
             
             const token = jwt.sign({id: id, username}, `${JWT_SECRET}`);  
-
+            console.log('SuCCeSS!');
             res.send({message: 'SUCCESS', token});
 
         }else{

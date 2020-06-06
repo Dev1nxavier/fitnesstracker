@@ -104,19 +104,22 @@ $('#app').on('click', '#login_button', async function (event) {
     const username = $('#username_login').val();
     const password = $('#password_login').val();
 
+    console.log('Username entered: ', username, 'Password:', password);
     await login(username, password);    
 
 })
 
 async function login(username, password) {
+
+    console.log('Entered User Login: ', username, password);
     const params = {
         method: "POST",
         headers:{'Content-Type': 'application/json'},
         body:JSON.stringify({
-            username,
-            password
+            username: username,
+            password: password
         })
-    };
+    }
     try {
         const res = fetch(`${BASE_URL}/users/login`, params )
         .then(res => res.json())
@@ -152,7 +155,7 @@ console.log('Entered getPublicRoutines');
 }
 
 async function displayRoutines(routines) {
-    console.log('Entered displayRoutines. Routines: ', Array.isArray(routines) );
+    console.log('Entered displayRoutines. Routines: ', routines);
     const app = $('#app');
     app.empty();
 
@@ -194,11 +197,13 @@ $('#app').on('click', '.add-activity', async function(event){
 })
 
 async function addActivityToCurrentRoutine(routineId, activityId) {
-    console.log('Entered addActivityToCurrentRoutine. RoutineID:',routineId, 'activityId:', activityId);
+    console.log('Entered addActivityToCurrentRoutine. RoutineID:',routineId, 'activityId:', activityId, 'with sessionToken: ', STATE.sessionToken);
 
     const params={
         method:"POST",
-        headers:{'Content-Type': 'application/json'},
+        headers:{ 'Authorization': `Bearer ${STATE.sessionToken}`,
+                    'Content-Type': 'application/json',
+                    },
         body:JSON.stringify({
             routineId,
             activityId
