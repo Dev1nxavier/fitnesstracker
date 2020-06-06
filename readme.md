@@ -19,7 +19,7 @@ Preston suggestion:
     Getting started: npm install... npm run start:dev... npm run test:watch... etc.
 
 BRIAN: 
-    - Fix getRoutinesByUser? search function = getRoutinesByUsername
+    - Fix getRoutinesByUser? search function = getRoutinesByUsername - DONE
     - Need ability to click card and have it display all activities. Make tabs
 
 SEAN:

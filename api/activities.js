@@ -6,6 +6,7 @@ const activitiesRouter = express.Router();
 
 // activitiesRouter.get('/', async(req, res, next)=>{
 //     res.send({message: 'entered /activities successfully'});
+//     next();
 // })
 
 const bodyParser = require('body-parser');
@@ -13,11 +14,17 @@ activitiesRouter.use(bodyParser.json());
 
 
 activitiesRouter.get('/', async(req, res) => {
-    const activities = await getAllActivities();
+    try {
+        const activities = await getAllActivities();
 
-    res.send({
-        activities
-    });
+        console.log()
+        res.send({
+            message: 'retrieved activities',
+            data: activities,
+        });
+    } catch (error) {
+        next(error)
+    }
 });
 
 // POST /activities (*)
@@ -26,6 +33,7 @@ activitiesRouter.post('/', requireUser, async(req, res, next) => {
     console.log('Activity to be created: ',body);
     try {
         const activity = await createActivity({name: body.name, description: body.description});
+
         if (activity) {
             res.send({
                 activity,

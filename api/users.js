@@ -6,7 +6,7 @@ const { JWT_SECRET } = 'POST_SECRET';
 
 const prefix = 'Bearer';
 
-const { createUser, db, getUserByUsername , getRoutineByUsername} = require('../db');
+const { createUser, db, getUserByUsername , getRoutineByUsername, getAllRoutinesByUser} = require('../db');
 
 const {requireUser} = require('./utils');
 
@@ -85,8 +85,10 @@ usersRouter.post('/login', async (req, res, next)=>{
 usersRouter.post('/:username/routines', async(req, res, next)=>{
     console.log('Entered POST /:username/routines');
     const { username } = req.body;
+
+    console.log('username: ', username);
 try {
-    const routines = await getRoutineByUsername(username);
+    const routines = await getAllRoutinesByUser(username);
     
     res.send({message: 'SUCCESS', routines});
 
