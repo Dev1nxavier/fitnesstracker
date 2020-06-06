@@ -166,9 +166,9 @@ async function getAllActivitiesArray() {
     fetch(`${BASE_URL}/activities`, params)
         .then(res=>res.json())
         .then(data=>{
-            console.log('All Activities from getAllActivitiesArray: ', data.activities);
-            STATE.activities = data.activities; 
-            renderActivities(data.activities);
+            STATE.activities = data.data; 
+            console.log('All Activities from getAllActivitiesArray: ', data.data, 'STATE.activities: ', STATE.activities);
+            renderActivities(STATE.activities);
         })
 }
 
@@ -181,8 +181,6 @@ async function displayRoutines(routines) {
     routines.forEach(function(routine){
         routinesDiv.append(renderRoutineCard(routine));
     });
-
-    console.log('routines Div: ', routinesDiv);
 
     app.append(routinesDiv);
 }
@@ -197,7 +195,7 @@ function renderRoutineCard(routine) {
     <div class="card-body">
       <h5 class="card-title">${name}</h5>
       <p class="card-text"><small class="text-muted">${username}</small></p>
-      <p class="card-text">S${goal}</p>
+      <p class="card-text">${goal}</p>
       <a href="#" class="btn btn-primary add-activity">Add Activity</a>
     </div>
     `);
@@ -287,12 +285,12 @@ async function getUserRoutines(username) {
         fetch(`${BASE_URL}/users/${username}/routines`,params)
             .then(res=>res.json())
             .then(data=>{
-                console.log('Your routines:',data);
-                STATE.routines=data;
-                const routinesArray = new Array();
-                routinesArray.push(data.routines);
-                displayRoutines(routinesArray);
-                console.log('data.routines: ', data.routines, 'routinesArray: ', routinesArray);
+                console.log('Your routines:',data.routines);
+                STATE.routines=data.routines;
+                // const routinesArray = new Array();
+                // routinesArray.push(data.routines);
+                displayRoutines(STATE.routines);
+                console.log('data.routines: ', data.routines, 'STATE.routines: ', STATE.routines);
             })
     } catch (error) {
         

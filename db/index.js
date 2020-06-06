@@ -103,12 +103,12 @@ async function updateActivity(activityId, fields = {}) {
 
 async function getAllActivities() {
     try {
-        const {rows} = await db.query(`
+        const {rows: activities} = await db.query(`
             SELECT *
             FROM activities;
         `);
 
-        return rows;
+        return activities;
     } catch (error) {
         throw error;
     }
@@ -195,12 +195,13 @@ async function getPublicRoutines() {
     }
 }
 
-async function getAllRoutinesByUser({username}) {
+//why was username originally de-structured from object?
+async function getAllRoutinesByUser(username) {
     console.log("Entering getAllRoutinesByUser")
-    const {id} = getUserByUsername(username);
-    console.log('User ID: ', id);
-
+    
     try {
+        const {id} = await getUserByUsername(username);
+        console.log('User ID: ', id);
         const {rows: routineIds} = await db.query(`
             SELECT id
             FROM routines
@@ -217,7 +218,7 @@ async function getAllRoutinesByUser({username}) {
     }
 }
 
-async function getPublicRoutinesByUser({username}) {
+async function getPublicRoutinesByUser(username) {
     const {id} = getUserByUsername(username);
 
     try {
@@ -420,6 +421,7 @@ async function updateActivityToRoutine(id, fields={}) {
     
 }
 
+//was only grabbing one routine. getAllRoutinesByUser & getPublicRoutinesByUser already did this.
 async function getRoutineByUsername(username) {
     console.log('Entered getRoutineByUsername db with username:', username);
 
@@ -457,5 +459,5 @@ module.exports={
     getPublicRoutinesByActivity,
     getRoutineByUsername,
     getAllRoutinesByUser,
-
+    getPublicRoutinesByUser,
 };
