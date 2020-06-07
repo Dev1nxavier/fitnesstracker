@@ -1,5 +1,5 @@
 const express = require('express');
-const {getAllActivities, createActivity, updateActivity} = require('../db');
+const {getAllActivities, createActivity, updateActivity, getPublicRoutinesByActivity, getPublicRoutinesByActivityId} = require('../db');
 const {requireUser} = require('./utils');
 const activitiesRouter = express.Router();
 
@@ -86,15 +86,45 @@ activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
 });
 
 // GET /activities/:activityId/routines
+activitiesRouter.get('/:activityId/routines', async (req, res, next)=>{
+    console.log('Entered GET /:activityId/routines');
+
+    const { activityId } = req.body();
+
+    try {
+        const routines = await getPublicRoutinesByActivityId(activityId)
+
+        console.log('Success! routines: ', routines);
+        res.send({
+            message: 'Successfully retrieved routines by activity ID',
+            status: true,
+            routines
+        })
+    } catch ({name, message}) {
+        next({name, message});
+    }
+
+})
+
+// GET routines by activity name
+activitiesRouter.get('/:activityName/routines', async (req, res, next)=>{
+    console.log('Entered GET /:activityName/routines');
+
+    const { activityName } = req.body();
+
+    try {
+        const routines = await getPublicRoutinesByActivity(activityName)
+
+        console.log('Success! routines: ', routines);
+        res.send({
+            message: 'Successfully retrieved routines by activity ID',
+            status: true,
+            routines
+        })
+    } catch ({name, message}) {
+        next({name, message});
+    }
+
+})
 
 module.exports = activitiesRouter;
-
-// if (activities.length) {
-//     const activitiesList = createActivitiesList(activities);
-//     const activitiesContainer = $(`
-//         <div class="overflow-auto tab-pane fade" id="activities-${id}" role="tabpanel" aria-labelledby="activities-tab"></div>
-//     `);
-
-//     activitiesContainer.append(activitiesList);
-//     card.append(activitiesContainer);
-// }

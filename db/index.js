@@ -240,7 +240,8 @@ async function getPublicRoutinesByUser(username) {
 
 
 async function getPublicRoutinesByActivity(activityString) {
-    const {rows: [routines]} = await db.query(`
+    try {
+        const {rows: [routines]} = await db.query(`
         SELECT * FROM routines 
         JOIN routine_activities ON routines.id=routine_activities."routineId"
         JOIN activities ON routine_activities."activityId"=activities.id
@@ -250,8 +251,30 @@ async function getPublicRoutinesByActivity(activityString) {
     console.log('Your routines with activity: ', activityString, ': ', routines);
 
     return routines; 
+    } catch (error) {
+        throw error;
+    }
+   
 }
 
+async function getPublicRoutinesByActivityId(activityId) {
+
+    console.log('Entered getPublicRoutinesByActivityId, activityId: ', activityId);
+    try {
+        const { rows: [routines] } = await db.query(`
+        SELECT * FROM routines 
+        JOIN routines_activities ON routines.id=routine_activities."routineId"
+        WHERE routine_activities."routineId"=$1 AND routines.public=true;
+        `, [activityId]);
+
+        console.log('Exiting with routines: ', routines);
+
+        return routines;
+
+    } catch (error) {
+        
+    }
+}
 
 async function getRoutineById(routineId) {
     try {
@@ -460,4 +483,5 @@ module.exports={
     getRoutineByUsername,
     getAllRoutinesByUser,
     getPublicRoutinesByUser,
+    getPublicRoutinesByActivityId
 };

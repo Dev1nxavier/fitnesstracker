@@ -3,6 +3,7 @@ let STATE={
 
     username: '',
     password:'',
+    userId:'',
     hashpassword:'',
     sessionToken: '',
     login: false,
@@ -14,11 +15,10 @@ let routineId;
 
 const BASE_URL = 'http://localhost:3000/api'
 
-async function refreshState() {
+async function renderState() {
     const app=$('#app');
 
         if (!STATE.login) {
-        
         
          const form= $(`
         <div class="jumbotron" id="login-register-jumbo"> 
@@ -130,10 +130,20 @@ async function login(username, password) {
             STATE.username = username;
             STATE.password = password;
             STATE.sessionToken = data.token;
-            STATE.login = true; 
-            alert('Login successful');
+
+            STATE.userId = data.id;
+            
+            if (data.token) {
+                STATE.login = true;
+                alert('Login Successful');
+                getPublicRoutines();
+            }else{
+                alert('Unable to log in. Please check username & password.');
+                return;
+            }
         })
-        .then(getPublicRoutines)
+        // .then(getPublicRoutines)
+        .catch(error)
     } catch (error) {
         throw error;
     }
@@ -166,9 +176,10 @@ async function getAllActivitiesArray() {
     fetch(`${BASE_URL}/activities`, params)
         .then(res=>res.json())
         .then(data=>{
-            STATE.activities = data.data; 
-            console.log('All Activities from getAllActivitiesArray: ', data.data, 'STATE.activities: ', STATE.activities);
-            renderActivities(STATE.activities);
+            const { data:activities } = data;
+            console.log('All Activities from getAllActivitiesArray: ', activities);
+            STATE.activities = activities; 
+            renderActivities(activities);
         })
 }
 
@@ -182,12 +193,15 @@ async function displayRoutines(routines) {
         routinesDiv.append(renderRoutineCard(routine));
     });
 
+    console.log('routines Div: ', routinesDiv);
+
     app.append(routinesDiv);
 }
 
 function renderRoutineCard(routine) {
     const {id, activities, name, goal, author:{username}=''} = routine;
-    console.log('renderRoutineCard - Activities: ', activities)
+    const userId = STATE.userId;
+    const authorId = routine.authorId;
 
     // console.log('name:',name, 'goal:',goal, 'author:',username);
     const card = $(`
@@ -215,8 +229,8 @@ function renderRoutineCard(routine) {
                     <h5 class="card-title">${name}</h5>
                     <p class="card-text"><small class="text-muted">${username}</small></p>
                     <p class="card-text">${goal}</p>
-                    <a href="#" class="btn btn-primary add-activity">Add Activity</a>
-                </div>
+                    ${userId == authorId?'<a href="#" class="btn btn-primary add-activity">Add Activity</a>':''}
+                    </div>
             ${
                 activities.length
                 ? `
@@ -334,12 +348,13 @@ async function getUserRoutines(username) {
         fetch(`${BASE_URL}/users/${username}/routines`,params)
             .then(res=>res.json())
             .then(data=>{
-                console.log('Your routines:',data.routines);
-                STATE.routines=data.routines;
-                // const routinesArray = new Array();
-                // routinesArray.push(data.routines);
-                displayRoutines(STATE.routines);
-                console.log('data.routines: ', data.routines, 'STATE.routines: ', STATE.routines);
+                console.log('Your routines:',data);
+                STATE.routines=data;
+                const routinesArray = new Array();
+                routinesArray.push(data.routines);
+                displayRoutines(data.routines);
+                console.log('data.routines: ', data.routines, 'routinesArray: ', routinesArray);
+
             })
     } catch (error) {
         
@@ -347,29 +362,46 @@ async function getUserRoutines(username) {
     
 }
 
-$('.search-button').on('click', (e)=>{
-    console.log('search button clicked!');
+// $('.search-button').on('click', (e)=>{
+//     console.log('search button clicked!');
 
-    const keywords = $('#keywords').val();
+//     const keywords = $('#keywords').val();
 
-    const routinesSearch = getUserRoutines(keywords);
+//     const routinesSearch = getUserRoutines(keywords);
 
-    console.log('your routines: ', routinesSearch)
+//     console.log('your routines: ', routinesSearch)
   
     
+// })
+
+$('#keywords').on('input', function(e){
+   const searchKey= $(this).val();
+   search(searchKey);
 })
+
+function search(searchKey) {
+    console.log(searchKey);
+
+    let resultsArray=[];
+    const searchTerm = searchKey.toLowerCase();
+    let authorSearch = STATE.Publicroutines.filter(function(routine){
+        return routine.author.username.toLowerCase().indexOf(`${searchTerm}`) !==-1;
+    })
+
+    authorSearch.forEach(routine=>resultsArray.push(routine));
+
+    displayRoutines(resultsArray);
+}
     
 $('.closebtn').on('click', function(){
     console.log('SLider button clicked');
 
     $('.activities_drawer').css('width', "0");
 
-
-
-
 })
 
+
 $(document).ready(
-    refreshState(),
+    renderState(),
     getAllActivitiesArray(),
     );
