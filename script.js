@@ -3,6 +3,7 @@ let STATE={
 
     username: '',
     password:'',
+    userId:'',
     hashpassword:'',
     sessionToken: '',
     login: false,
@@ -129,10 +130,20 @@ async function login(username, password) {
             STATE.username = username;
             STATE.password = password;
             STATE.sessionToken = data.token;
-            STATE.login = true; 
-            alert('Login successful');
+
+            STATE.userId = data.id;
+            
+            if (data.token) {
+                STATE.login = true;
+                alert('Login Successful');
+                getPublicRoutines();
+            }else{
+                alert('Unable to log in. Please check username & password.');
+                return;
+            }
         })
-        .then(getPublicRoutines)
+        // .then(getPublicRoutines)
+        .catch(error)
     } catch (error) {
         throw error;
     }
@@ -189,6 +200,8 @@ async function displayRoutines(routines) {
 
 function renderRoutineCard(routine) {
     const { name, goal, author:{username}=''} = routine;
+    const userId = STATE.userId;
+    const authorId = routine.authorId;
 
     // console.log('name:',name, 'goal:',goal, 'author:',username);
     const card = $(`
@@ -198,7 +211,7 @@ function renderRoutineCard(routine) {
       <h5 class="card-title">${name}</h5>
       <p class="card-text"><small class="text-muted">${username}</small></p>
       <p class="card-text">S${goal}</p>
-      <a href="#" class="btn btn-primary add-activity">Add Activity</a>
+      ${userId == authorId?'<a href="#" class="btn btn-primary add-activity">Add Activity</a>':''}
     </div>
     `);
 

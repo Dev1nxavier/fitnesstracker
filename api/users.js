@@ -69,7 +69,7 @@ usersRouter.post('/login', async (req, res, next)=>{
             
             const token = jwt.sign({id: id, username}, `${JWT_SECRET}`);  
             console.log('SuCCeSS!');
-            res.send({message: 'SUCCESS', token});
+            res.send({message: 'SUCCESS', token, id});
 
         }else{
             next({name: "IncorrectLoginCredentialsError",
