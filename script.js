@@ -301,27 +301,44 @@ async function getUserRoutines(username) {
     
 }
 
-$('.search-button').on('click', (e)=>{
-    console.log('search button clicked!');
+// $('.search-button').on('click', (e)=>{
+//     console.log('search button clicked!');
 
-    const keywords = $('#keywords').val();
+//     const keywords = $('#keywords').val();
 
-    const routinesSearch = getUserRoutines(keywords);
+//     const routinesSearch = getUserRoutines(keywords);
 
-    console.log('your routines: ', routinesSearch)
+//     console.log('your routines: ', routinesSearch)
   
     
+// })
+
+$('#keywords').on('input', function(e){
+   const searchKey= $(this).val();
+   search(searchKey);
 })
+
+function search(searchKey) {
+    console.log(searchKey);
+
+    let resultsArray=[];
+    const searchTerm = searchKey.toLowerCase();
+    let authorSearch = STATE.Publicroutines.filter(function(routine){
+        return routine.author.username.toLowerCase().indexOf(`${searchTerm}`) !==-1;
+    })
+
+    authorSearch.forEach(routine=>resultsArray.push(routine));
+
+    displayRoutines(resultsArray);
+}
     
 $('.closebtn').on('click', function(){
     console.log('SLider button clicked');
 
     $('.activities_drawer').css('width', "0");
 
-
-
-
 })
+
 
 $(document).ready(
     renderState(),
