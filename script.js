@@ -233,7 +233,8 @@ async function displayRoutines(routines) {
 function renderRoutineCard(routine) {
     const {id, activities, name, goal, author:{username}=''} = routine;
     const userId = STATE.userId;
-    const authorId = routine.authorId;
+    const authorId = routine.creatorId;
+    console.log('Author and user id:',authorId, userId);
 
     // console.log('name:',name, 'goal:',goal, 'author:',username);
     const card = $(`
@@ -261,7 +262,7 @@ function renderRoutineCard(routine) {
                     <h5 class="card-title">${name}</h5>
                     <p class="card-text"><small class="text-muted">${username}</small></p>
                     <p class="card-text">${goal}</p>
-                    ${userId == authorId?'<a href="#" class="btn btn-primary add-activity">Add Activity</a>':''}
+                    ${userId === authorId?'<a href="#" class="btn btn-primary add-activity">Add Activity</a>':''}
                     </div>
             ${
                 activities.length
