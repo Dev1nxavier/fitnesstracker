@@ -73,12 +73,11 @@ $('#home').click(function (e) {
 })
 
 $('#create-routine').click(function(e){
-
+    $('#createRoutineModal .modal-body').empty();
     $('#createRoutineModal .modal-body').append(renderModalForm());
     $('#createRoutineModal').modal('toggle');
 
-    // createNewRoutine({name:'Seans New Routine', goal:'Master of the universe', isPublic:true});
-})
+
 
 $('#createRoutineModal #submit').on('click', function(){
     const routineName = $('#modal-name').val();
@@ -364,6 +363,8 @@ $('.activities_drawer').on('click', '.activity_list_item',async function(){
 })
 
 function renderModalForm(){
+
+
     const modalForm = $(`
     <form>
         <div class="form-group">
