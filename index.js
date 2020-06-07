@@ -12,6 +12,7 @@ db.connect();
 
 server.use(express.json());
 server.use(morgan('dev')); //use morgan in development environment only
+server.use(express.static("public"))
 server.use(cors());
 server.use('/api', apiRouter);
 
