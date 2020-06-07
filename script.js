@@ -13,8 +13,8 @@ let STATE={
 
 let routineId;
 
-// const BASE_URL = 'http://localhost:3000/api'
-const BASE_URL = '/api'
+const BASE_URL = 'http://localhost:3000/api'
+// const BASE_URL = '/api'
 
 async function renderState() {
     const app=$('#app');
