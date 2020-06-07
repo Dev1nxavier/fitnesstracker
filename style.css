@@ -85,3 +85,7 @@
     font-size: 36px;
     margin-left: 0;
     }
+
+.navbar-brand img{
+    width: 55px;
+}

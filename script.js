@@ -67,6 +67,38 @@ async function renderState() {
         }
 }
 
+$('#home').click(function (e) {
+    e.preventDefault();
+    displayRoutines(STATE.Publicroutines);
+})
+
+$('#create-routine').click(function(e){
+
+    createNewRoutine({name:'Seans New Routine', goal:'Master of the universe', isPublic:true});
+})
+
+async function createNewRoutine({name, goal, isPublic}){
+    const params={
+        method:"POST",
+        headers:{ 'Authorization': `Bearer ${STATE.sessionToken}`,
+                    'Content-Type': 'application/json',
+                    },
+        body:JSON.stringify({
+            isPublic,
+            name,
+            goal
+        })
+    }
+
+        fetch(`${BASE_URL}/routines`, params)
+            .then(res=>res.json())
+            .then(data=>{
+                const { routine } = data
+                console.log('New routine created!',routine);
+
+                return STATE.Publicroutines.push(routine);
+            })
+}
 
 $('#app').on('click','#register_button',function(){
     event.preventDefault();
@@ -143,7 +175,7 @@ async function login(username, password) {
             }
         })
         // .then(getPublicRoutines)
-        .catch(error)
+        .catch(error=>{throw error})
     } catch (error) {
         throw error;
     }
