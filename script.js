@@ -66,11 +66,6 @@ async function renderState() {
         }
 }
 
-async function initializePage() {
-   const allPublicRoutines = await getPublicRoutines();
-
-}
-
 
 $('#app').on('click','#register_button',function(){
     event.preventDefault();
@@ -99,7 +94,7 @@ $('#app').on('click','#register_button',function(){
         STATE.hashpassword = data.user.password;
         login(STATE.username, STATE.password)
     })
-    // .then(getPublicRoutines())
+    .then(getPublicRoutines())
 
 })
 
@@ -137,7 +132,7 @@ async function login(username, password) {
             STATE.login = true; 
             alert('Login successful');
         })
-        // .then(getPublicRoutines)
+        .then(getPublicRoutines)
     } catch (error) {
         throw error;
     }
@@ -154,11 +149,9 @@ console.log('Entered getPublicRoutines');
     fetch(`${BASE_URL}/routines`,params)
         .then(res=>res.json())
         .then(data=>{
-            const { data:publicRoutines } = data;
-            console.log('Your routines:',publicRoutines);
-            STATE.Publicroutines=publicRoutines;
-            // displayRoutines(data.data);
-            
+            console.log('Your routines:',data);
+            STATE.Publicroutines=data.data;
+            displayRoutines(data.data);
         })
    
 }
@@ -172,10 +165,10 @@ async function getAllActivitiesArray() {
     fetch(`${BASE_URL}/activities`, params)
         .then(res=>res.json())
         .then(data=>{
-            const {activities} = data;
-            console.log('All Activities from getAllActivitiesArray: ',activities);
+            const { data:activities } = data;
+            console.log('All Activities from getAllActivitiesArray: ', activities);
             STATE.activities = activities; 
-            // renderActivities(data.activities);
+            renderActivities(activities);
         })
 }
 
@@ -188,6 +181,8 @@ async function displayRoutines(routines) {
     routines.forEach(function(routine){
         routinesDiv.append(renderRoutineCard(routine));
     });
+
+    console.log('routines Div: ', routinesDiv);
 
     app.append(routinesDiv);
 }
@@ -202,7 +197,7 @@ function renderRoutineCard(routine) {
     <div class="card-body">
       <h5 class="card-title">${name}</h5>
       <p class="card-text"><small class="text-muted">${username}</small></p>
-      <p class="card-text">${goal}</p>
+      <p class="card-text">S${goal}</p>
       <a href="#" class="btn btn-primary add-activity">Add Activity</a>
     </div>
     `);
@@ -292,12 +287,13 @@ async function getUserRoutines(username) {
         fetch(`${BASE_URL}/users/${username}/routines`,params)
             .then(res=>res.json())
             .then(data=>{
-                console.log('Your routines:',data.routines);
-                STATE.routines=data.routines;
-                // const routinesArray = new Array();
-                // routinesArray.push(data.routines);
-                displayRoutines(STATE.routines);
-                console.log('data.routines: ', data.routines, 'STATE.routines: ', STATE.routines);
+                console.log('Your routines:',data);
+                STATE.routines=data;
+                const routinesArray = new Array();
+                routinesArray.push(data.routines);
+                displayRoutines(data.routines);
+                console.log('data.routines: ', data.routines, 'routinesArray: ', routinesArray);
+
             })
     } catch (error) {
         
