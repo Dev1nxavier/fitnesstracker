@@ -8,7 +8,9 @@
   },
   "scripts": {
     "seed:dev": "node-dev --respawn ./db/seed.js",
+    "seed": "node .db/seed.js",
     "start:dev": "node-dev --respawn ./index.js",
+    "start": "node ./index.js",
     "test:watch": "jest --watchAll --maxWorkers=1"
   },
   "repository": {

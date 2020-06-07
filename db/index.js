@@ -1,5 +1,6 @@
 const { Client } = require('pg');
-const db = new Client('postgres://localhost:5432/fitness-dev');
+const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/fitness-dev'
+const db = new Client(connectionString);
 
 async function createUser({username, password}){
 
