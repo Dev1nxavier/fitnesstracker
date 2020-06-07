@@ -74,7 +74,22 @@ $('#home').click(function (e) {
 
 $('#create-routine').click(function(e){
 
-    createNewRoutine({name:'Seans New Routine', goal:'Master of the universe', isPublic:true});
+    $('#createRoutineModal .modal-body').append(renderModalForm());
+    $('#createRoutineModal').modal('toggle');
+
+    // createNewRoutine({name:'Seans New Routine', goal:'Master of the universe', isPublic:true});
+})
+
+$('#createRoutineModal #submit').on('click', function(){
+    const routineName = $('#modal-name').val();
+    const routineGoal = $('#modal-goal').val();
+    const public = $('#public').prop('checked');
+
+    console.log('Routine:', routineName, 'Goal:', routineGoal, 'is public?', public);
+
+    createNewRoutine({name:routineName, goal:routineGoal, isPublic:public});
+    
+    $('#createRoutineModal').modal('toggle');
 })
 
 async function createNewRoutine({name, goal, isPublic}){
@@ -305,7 +320,7 @@ function createRoutineCardActivities(activities) {
 }
 
 function renderActivities(activities) {
-    console.log(Array.isArray(activities), 'OR IS THIS AN OBJECT?', typeof activities);
+
 
     const divContainer =$(`<div class="card-group"></div>`);
 
@@ -342,9 +357,29 @@ $('.activities_drawer').on('click', '.activity_list_item',async function(){
     const activityId = $(this).data('activity').id;
     console.log('Your chosen activity: ', activityId);
 
+
+
     await addActivityToCurrentRoutine(routineId, activityId);
 
 })
+
+function renderModalForm(){
+    const modalForm = $(`
+    <form>
+        <div class="form-group">
+        <input type="text" class="form-control" id="modal-name" placeholder="Routine Name">
+    </div>
+    <div class="form-group">
+        <input type="text" class="form-control" id="modal-goal" placeholder="What do you want to achieve?">
+    </div>
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="public">
+        <label class="form-check-label" for="public">Public Routine</label>
+    </div>
+  </form>`)
+
+  return modalForm;
+}
 
 async function addActivityToCurrentRoutine(routineId, activityId) {
     console.log('Entered addActivityToCurrentRoutine. RoutineID:',routineId, 'activityId:', activityId, 'with sessionToken: ', STATE.sessionToken);
@@ -395,17 +430,6 @@ async function getUserRoutines(username) {
     
 }
 
-// $('.search-button').on('click', (e)=>{
-//     console.log('search button clicked!');
-
-//     const keywords = $('#keywords').val();
-
-//     const routinesSearch = getUserRoutines(keywords);
-
-//     console.log('your routines: ', routinesSearch)
-  
-    
-// })
 
 $('#keywords').on('input', function(e){
    const searchKey= $(this).val();
@@ -426,12 +450,15 @@ function search(searchKey) {
     displayRoutines(resultsArray);
 }
     
-$('.closebtn').on('click', function(){
+$('.closebtn').on('click', async function(){
     console.log('SLider button clicked');
 
     $('.activities_drawer').css('width', "0");
+    await getPublicRoutines();
 
 })
+
+
 
 
 $(document).ready(
