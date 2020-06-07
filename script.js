@@ -77,7 +77,7 @@ $('#create-routine').click(function(e){
     $('#createRoutineModal .modal-body').append(renderModalForm());
     $('#createRoutineModal').modal('toggle');
 
-
+})
 
 $('#createRoutineModal #submit').on('click', function(){
     const routineName = $('#modal-name').val();
@@ -298,6 +298,7 @@ function renderRoutineCard(routine) {
 }
 
 function createRoutineCardActivities(activities) {
+    console.log('createRoutineCardActivities: ', activities)
     const activitiesContainer = `<div class="card-group">
 
     ${activities.map(activity=>{
@@ -412,7 +413,7 @@ async function getUserRoutines(username) {
         body:JSON.stringify({
             username: username
         })
-    };
+    }
     try {
         fetch(`${BASE_URL}/users/${username}/routines`,params)
             .then(res=>res.json())
@@ -426,7 +427,7 @@ async function getUserRoutines(username) {
 
             })
     } catch (error) {
-        
+        console.error(error);
     }
     
 }
@@ -457,10 +458,7 @@ $('.closebtn').on('click', async function(){
     $('.activities_drawer').css('width', "0");
     await getPublicRoutines();
 
-})
-
-
-
+});
 
 $(document).ready(
     renderState(),

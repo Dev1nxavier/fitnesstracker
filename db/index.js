@@ -286,9 +286,9 @@ async function getRoutineById(routineId) {
 
         //CHECK FUNCTION: SELECT * OR SELECT activities.* ??
         const { rows: activities } = await db.query(`
-            SELECT activities.*
+            SELECT *
             FROM activities
-            JOIN routine_activities ON activities.id=routine_activities."routineId"
+            JOIN routine_activities ON activities.id=routine_activities."activityId"
             WHERE routine_activities."routineId"=$1;
         `, [routineId]);
 
@@ -300,7 +300,7 @@ async function getRoutineById(routineId) {
 
         routine.activities = activities;
         routine.author = author;
-        console.log('routine: ', routine);
+        console.log('routines: ', routine);
         return routine;
     } catch (error) {
         throw error;
