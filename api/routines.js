@@ -48,6 +48,8 @@ routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
     const {public, name, goal} = req.body;
     const updateFields = {};
 
+    console.log('Entered /routinesId PATCH. RoutineId: ', routinesId, 'req.body: ', req.body);
+
     if(public){
         updateFields.public = public;
     }
@@ -60,7 +62,6 @@ routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
         updateFields.goal = goal;
     }
 
-    console.log('Entered /routinesId PATCH. RoutineId: ', routinesId);
     
     try {
         const originalRoutine = await getRoutineById(routinesId)
@@ -68,6 +69,7 @@ routinesRouter.patch('/:routinesId',requireUser, async (req, res, next)=>{
         console.log(originalRoutine);
         
         if (originalRoutine.author.id === req.user.id) {
+        // if (5 === req.user.id) {
             console.log("permission to edit routine granted");
             const updatedRoutine = await updateRoutine(originalRoutine.id, updateFields);
             console.log('Edited routine: ', updatedRoutine);
@@ -123,6 +125,7 @@ routinesRouter.delete('/:routineId', requireUser, async (req, res, next) => {
     try {
 
         if (originalRoutine.author.id === req.user.id) {
+        // if (5 === req.user.id) {
             const deleteRoutine = await destroyRoutine(routineId);
             console.log('sending response');
             res.send({

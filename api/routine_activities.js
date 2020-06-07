@@ -33,12 +33,9 @@ routine_activitiesRouter.post('/', requireUser, async (req, res, next)=>{
 })
 
 routine_activitiesRouter.patch('/:routineActivityId', requireUser, async (req, res, next)=>{
-
-
     const { routineActivityId } = req.params;
     const { count, duration } = req.body;
-try {
-    let fields = {};
+    const fields = {};
 
     if (count) {
         fields.count = count;
@@ -48,6 +45,8 @@ try {
         fields.duration = duration;
     }
 
+try {
+
     console.log('entered routineActivity PATCH')
 
     //get original routine_activity
@@ -55,6 +54,7 @@ try {
     console.log('/PATCH routineActivityId: ', routineActivityId);
     console.log('creatorId: ', creatorId, 'userId: ', req.user.id);
     if (creatorId === req.user.id) {
+    // if (5 === req.user.id) {
         console.log('User verified. Permission to edit');
 
         const routineActivity = await updateActivityToRoutine(routineActivityId, fields)
@@ -73,13 +73,14 @@ try {
 
 routine_activitiesRouter.delete('/:routineActivityId', requireUser, async (req, res, next)=>{
     //TODO: IF ensure user id matches author id
-try {
     const {routineActivityId}= req.params;
-    console.log('RoutineActivityId for deletion: ', routineActivityId);
-    const routineActivity = await getRoutineActivityById(routineActivityId);
-   
 
-    if (routineActivity.creatorId === req.user.id){
+try {
+    console.log('RoutineActivityId for deletion: ', routineActivityId);
+    const {creatorId} = await getRoutineActivityById(routineActivityId);
+   
+    if (creatorId === req.user.id){
+    // if (5 === req.user.id){
         const deleteActivity = await destroyRoutineActivity(routineActivityId);
         res.send({
             message: `activity deleted: ${deleteActivity}`,

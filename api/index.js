@@ -1,14 +1,9 @@
 require('dotenv').config();
-const { JWT_SECRET } = 'POST_SECRET';
-
+const {JWT_SECRET} = process.env;
 const jwt = require('jsonwebtoken');
-
 const express = require('express');
-
 const apiRouter = express.Router();
-
 const morgan = require('morgan');
-
 const {getUserById} = require('../db');
 
 apiRouter.use(async (req, res, next) => {

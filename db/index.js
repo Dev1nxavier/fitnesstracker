@@ -390,7 +390,8 @@ async function getRoutineActivityById(routineActivityId) {
     try {
 
         const { rows: [routineActivity] } = await db.query(`
-            SELECT * FROM routine_activities
+            SELECT * 
+            FROM routine_activities
             JOIN routines ON "routineId" = routines.id
             WHERE routine_activities.id=$1;
         `, [activityIdNum]);

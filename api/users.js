@@ -1,22 +1,12 @@
+require('dotenv').config()
 const express = require('express');
-
 const jwt = require('jsonwebtoken');
-
-const { JWT_SECRET } = 'POST_SECRET';
-
-const prefix = 'Bearer';
-
-const { createUser, db, getUserByUsername , getRoutineByUsername, getAllRoutinesByUser} = require('../db');
-
-const {requireUser} = require('./utils');
-
+const { JWT_SECRET } = process.env;
+const { createUser, db, getUserByUsername, getAllRoutinesByUser} = require('../db');
 const usersRouter = express.Router();
-
 const bodyParser = require('body-parser');
 usersRouter.use(bodyParser.json());
-
 const bcrypt = require('bcrypt');
-
 const SALT_COUNT = 10;
 
 usersRouter.get('/', async(req, res, next)=>{
@@ -28,7 +18,7 @@ usersRouter.post('/register', async (req, resp, next)=>{
     try {
         const { username, password } = req.body;
 
-    const user = bcrypt.hash(password, SALT_COUNT, async(error, hashedPassword)=>{//'const user =' not being used? can't this be removed? test still works
+    const user = bcrypt.hash(password, SALT_COUNT, async(error, hashedPassword)=>{
     
     const user = await createUser({username, password: hashedPassword});
 
