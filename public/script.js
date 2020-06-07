@@ -88,7 +88,8 @@ $('#createRoutineModal #submit').on('click', function(){
 
     console.log('Routine:', routineName, 'Goal:', routineGoal, 'is public?', public);
 
-    createNewRoutine({name:routineName, goal:routineGoal, isPublic:public});
+    await createNewRoutine({name:routineName, goal:routineGoal, isPublic:public});
+    await displayRoutines(STATE.Publicroutines);
     
     $('#createRoutineModal').modal('toggle');
 })
