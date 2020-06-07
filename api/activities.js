@@ -88,3 +88,13 @@ activitiesRouter.patch("/:activityId", requireUser, async (req, res, next) => {
 // GET /activities/:activityId/routines
 
 module.exports = activitiesRouter;
+
+// if (activities.length) {
+//     const activitiesList = createActivitiesList(activities);
+//     const activitiesContainer = $(`
+//         <div class="overflow-auto tab-pane fade" id="activities-${id}" role="tabpanel" aria-labelledby="activities-tab"></div>
+//     `);
+
+//     activitiesContainer.append(activitiesList);
+//     card.append(activitiesContainer);
+// }

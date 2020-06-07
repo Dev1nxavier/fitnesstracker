@@ -186,17 +186,48 @@ async function displayRoutines(routines) {
 }
 
 function renderRoutineCard(routine) {
-    const { name, goal, author:{username}=''} = routine;
+    const {id, activities, name, goal, author:{username}=''} = routine;
+    console.log('renderRoutineCard - Activities: ', activities)
 
     // console.log('name:',name, 'goal:',goal, 'author:',username);
     const card = $(`
     <div class="card" style="width: 18rem;">
-    <img src="resources/dumbells.jpg" class="card-img-top">
-    <div class="card-body">
-      <h5 class="card-title">${name}</h5>
-      <p class="card-text"><small class="text-muted">${username}</small></p>
-      <p class="card-text">${goal}</p>
-      <a href="#" class="btn btn-primary add-activity">Add Activity</a>
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="card-tab">
+                <li class="nav-item">
+                    <a class="nav-link active" id="routine-tab" data-toggle="tab" href="#routine-${id}" role="tab" aria-controls="routine-${id}" aria-selected="true">Routine</a>
+                </li>
+                ${
+                activities.length
+                    ? `
+                    <li class="nav-item">
+                        <a class="nav-link" id="activities-tab" data-toggle="tab" href="#activities-${id}" role="tab" aria-controls="activities-${id}" aria-selected="false">Activities <span class="badge badge-info">${activities.length}</span></a>
+                    </li>
+                    `
+                    : ""
+                }
+            </ul>
+        </div>
+        <img src="resources/dumbells.jpg" class="card-img-top">
+        <div class="card-body">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="routine-${id}" role="tabpanel" aria-labelledby="routine-tab">
+                    <h5 class="card-title">${name}</h5>
+                    <p class="card-text"><small class="text-muted">${username}</small></p>
+                    <p class="card-text">${goal}</p>
+                    <a href="#" class="btn btn-primary add-activity">Add Activity</a>
+                </div>
+            ${
+                activities.length
+                ? `
+                <div class="overflow-auto tab-pane fade" id="activities-${id}" role="tabpanel" aria-labelledby="activities-tab">
+                ${createRoutineCardActivities(activities)}
+                </div>
+                `
+                : ""
+            }
+            </div>
+        </div>
     </div>
     `);
 
@@ -205,6 +236,26 @@ function renderRoutineCard(routine) {
     return card;
 }
 
+function createRoutineCardActivities(activities) {
+    const activitiesContainer = `<div class="card-group">
+
+    ${activities.map(activity=>{
+        const {name, description} = activity;
+
+        return `
+        <a href="#" class="card-group-item list-group-item-action activity_list_item">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">${name}</h5>
+            </div>
+            <p class="mb-1">${description}</p>
+        </a>
+        `;
+    })
+    .join("")}
+    </div>`;
+
+    return activitiesContainer;
+}
 
 function renderActivities(activities) {
     console.log(Array.isArray(activities), 'OR IS THIS AN OBJECT?', typeof activities);
@@ -228,8 +279,6 @@ function renderActivities(activities) {
     })
      
     $('.activities_container').append(divContainer);
-
-
 }
 
 $('#app').on('click', '.add-activity', async function(event){
