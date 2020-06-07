@@ -8,7 +8,7 @@
   },
   "scripts": {
     "seed:dev": "node-dev --respawn ./db/seed.js",
-    "seed": "node .db/seed.js",
+    "seed": "node ./db/seed.js",
     "start:dev": "node-dev --respawn ./index.js",
     "start": "node ./index.js",
     "test:watch": "jest --watchAll --maxWorkers=1"
@@ -36,7 +36,6 @@
     "jsonwebtoken": "^8.5.1",
     "material-design-icons": "^3.0.1",
     "morgan": "^1.10.0",
-    "node": "^14.4.0",
     "node-dev": "^4.0.0",
     "nodemon": "^2.0.4",
     "pg": "^8.2.1"
