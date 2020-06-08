@@ -81,7 +81,7 @@ $('#create-routine').click(function(e){
 
 })
 
-$('#createRoutineModal #submit').on('click', function(){
+$('#createRoutineModal #submit').on('click', async function(){
     const routineName = $('#modal-name').val();
     const routineGoal = $('#modal-goal').val();
     const public = $('#public').prop('checked');
